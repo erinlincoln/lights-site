@@ -1,0 +1,144 @@
+body {
+    margin: 0;
+    background-color: #fbe9d2;
+    font-family: 'Exo 2', sans-serif;
+}
+
+header {
+    background-color: #bc4855;
+    text-align: center;
+    font-size: 4vh;
+    color: white;
+    padding: 0px;
+    height: 15vh;
+    /* display: flex;
+    justify-content: flex-start;
+    align-content: flex-start; */
+}
+
+@keyframes shrink {
+    0% {
+        height: 100vh;
+        z-index: 2;
+    }
+    79% {
+        z-index: 2;
+    }
+    100% {
+        height: 30vh;
+        z-index: -1;
+    }
+}
+
+@keyframes zoomIn {
+    0% {
+        position: absolute;
+        top: 100vh;
+        width: 80vw;
+        /* height: 100%; */
+    }
+    60% {
+        position: absolute;
+        top: 100vh;  
+    }
+    100% {
+        position: absolute;
+        top: 15vh;
+        width: 80vw;
+    }
+}
+
+#header-circle {
+    background-color: #bc4855;
+    width: 100vw;
+    height: 30vh;
+    border-radius: 50%;
+    position: absolute;
+    top: 0vh;
+    z-index: -1;
+    animation: shrink 3s ease 0s 1;
+}
+
+h1 {
+    margin: auto;
+    padding-top: 2vh;
+    /* margin-left: 2vw; */
+    z-index: 3;
+}
+
+main {
+    height: 75vh;
+}
+
+#prompt {
+    font-family: 'Noto Sans Mende Kikakui', sans-serif;
+    font-weight: 100;
+    margin: auto;
+    text-align: center;
+    color: white;
+}
+
+.btn-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1;
+    margin: 5vmin;
+    gap: 5vmin;
+    height: 100%;
+    border-radius: 7px;
+    border-width: 0;
+    background-color: #fdf5eb;
+    padding: 20px;
+    animation: zoomIn 4s ease 0s 1;
+}
+
+.btn-container > button {
+    flex: 1;
+}
+
+button {
+    border-radius: 15px;
+    border-width: 0;
+    background-color: #f8a9b2;
+    color: #663238;
+    font-size: 8vw;
+}
+
+/* @keyframes expanding {
+    0% {
+        transform: scale(100);
+    }
+    99% {
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0);
+        overflow: hidden;
+        opacity: 0;
+        display: none;
+        visibility: hidden;
+    }
+}
+
+#load-graphic {
+    background-color: #bc4855;
+    border-radius: 50%;
+    width: 5vw;
+    height: 5vw;
+    transition: width 2s;
+    transition-timing-function: ease;
+    position: absolute;
+    left: 45vw;
+    animation: expanding 5s ease 0s 1;
+} */
+
+
+
+/* #9c6b6e
+#e76c84
+#fbe9d2
+#bc4855
+#b1afa5
+#857563
+*/

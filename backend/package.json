@@ -1,11 +1,13 @@
 {
-  "name": "lights-server",
+  "name": "lights-backend",
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
   "dependencies": {
     "dotenv": "^16.0.3",
+    "express": "^4.18.2",
     "knex": "^2.3.0",
+    "nodemon": "^2.0.20",
     "pg": "^8.8.0"
   },
   "devDependencies": {},
