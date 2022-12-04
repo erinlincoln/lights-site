@@ -121,6 +121,13 @@ img {
     padding-left: 1vw;
 }
 
+#back {
+    background-color: #663238;
+    color: white;
+    font-size: 3vw;
+    text-transform: capitalize;
+}
+
 /* @keyframes expanding {
     0% {
         transform: scale(100);
