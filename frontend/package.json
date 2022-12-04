@@ -8,5 +8,8 @@
     "start": "http-server -p 3005 --cors -o -c-1"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "http-server": "^14.1.1"
+  }
 }
