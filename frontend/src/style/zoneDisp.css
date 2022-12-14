@@ -1,0 +1,10 @@
+#zone-disp {
+    display: flex;
+    flex-direction: column;
+    gap: 5vh;
+    margin: auto;
+}
+
+img {
+    max-height: 20vw;
+}

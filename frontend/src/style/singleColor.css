@@ -1,0 +1,12 @@
+#color-picker {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%
+}
+
+#color-picker > * {
+    border: 10px solid rgba(255, 255, 255, 0.592);
+    border-radius: 20px;
+    margin: 10vmin;
+}
