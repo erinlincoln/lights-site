@@ -17,9 +17,10 @@ export default function ModeSelect({setColors, setMode, setChoices}) {
         <label htmlFor="mode-selector">Mode</label>
         <select name="mode" id="mode-selector" onChange={changeMode}>
             <option>Choose a mode</option>
+            <option value="off">off</option>
             <option value="sunlight">sunlight</option>
             <option value="single">single color</option>
-            <option value="rainbow">rainbow</option>
+            {/* <option value="rainbow">rainbow</option> */}
             <option value="stripped">stripped</option>
         </select>
     </div>

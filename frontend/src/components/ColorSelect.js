@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import ColorSet from './ColorSet';
 import SingleColor from './SingleColor';
-import ReactSlider from 'react-slider';
 import '../style/colorSelect.css';
 
 export default function ColorSelect({ colors, index, disp }) {
@@ -10,13 +9,16 @@ export default function ColorSelect({ colors, index, disp }) {
 
 
     useEffect( () => {
-        // document.querySelector( `#cs-${index}` ).style.backgroundColor = color;
         colors[ index ] = color;
         sendChange();
     }, [color, dim])
 
+    useEffect( () => {
+        if (disp.type === 'off') setColor('#000000');
+    }, [])
+
     async function sendChange() {
-        let res = await fetch('http://192.168.5.182:3001/lights/', {
+        await fetch('http://192.168.5.182:3001/lights/', {
             method: 'POST',
             mode: 'cors',
             headers: {
@@ -24,10 +26,7 @@ export default function ColorSelect({ colors, index, disp }) {
             },
             body: JSON.stringify({colors, dim: 100-dim})
         })
-        .then( res => res.json())
         .catch(err => console.log(err))
-
-        console.log(res)
     }
     
     return (
@@ -40,23 +39,6 @@ export default function ColorSelect({ colors, index, disp }) {
                     <ColorSet setColor={setColor} colorArr={disp.colors}/>
                     }
             </div>
-            
-            
-            <ReactSlider
-                className="vertical-slider"
-                thumbClassName="example-thumb"
-                trackClassName="example-track"
-                orientation="vertical"
-                sx={{
-                    '& input[type="range"]': {
-                      WebkitAppearance: 'slider-vertical',
-                    },
-                  }}
-                  value={dim}
-                  onChange={setDim}
-                // onKeyDown={preventHorizontalKeyboardNavigation}
-            />
-            
         </div>
         
     )
