@@ -6,12 +6,29 @@ import '../style/colorSelect.css';
 
 export default function ColorSelect({ colors, index, disp }) {
     const [color, setColor] = useState();
+    const [dim, setDim] = useState(100);
 
 
     useEffect( () => {
         // document.querySelector( `#cs-${index}` ).style.backgroundColor = color;
         colors[ index ] = color;
-    }, [color])
+        sendChange();
+    }, [color, dim])
+
+    async function sendChange() {
+        let res = await fetch('http://192.168.5.182:3001/lights/', {
+            method: 'POST',
+            mode: 'cors',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({colors, dim: 100-dim})
+        })
+        .then( res => res.json())
+        .catch(err => console.log(err))
+
+        console.log(res)
+    }
     
     return (
         <div id='color-select'>
@@ -35,6 +52,8 @@ export default function ColorSelect({ colors, index, disp }) {
                       WebkitAppearance: 'slider-vertical',
                     },
                   }}
+                  value={dim}
+                  onChange={setDim}
                 // onKeyDown={preventHorizontalKeyboardNavigation}
             />
             
