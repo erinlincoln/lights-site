@@ -1,0 +1,6 @@
+#choices {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    min-width: 50vw;
+}

@@ -1,5 +1,6 @@
 import React from 'react'
 import Rainbow from 'rainbowvis.js';
+import '../style/colorSet.css';
 
 
 export default function ColorSet({setColor, colorArr}) {
@@ -17,7 +18,7 @@ export default function ColorSet({setColor, colorArr}) {
     <div style={{
         backgroundImage: `linear-gradient(to right, ${colorArr[0]}, ${colorArr[1]})`,
         height: 50,
-    }} onMouseUp={handleClick}>
+    }} onMouseUp={handleClick} onTouchEnd={handleClick}>
     </div>
   )
 }

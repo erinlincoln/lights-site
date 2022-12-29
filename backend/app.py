@@ -1,50 +1,54 @@
 from flask import Flask, request, render_template
 from flask_cors import CORS
-import socket
+from setup import rooms
+import threading
 
 app = Flask(__name__)
 CORS(app)
 
-PORT = 1234  # The port used by the server
+queue = []
+DELAY = 0.02 # delay between sending data
 
-STRIP_LEN = 100
-
-currArr = [] #init for test view
 
 @app.route('/lights/', methods=['GET', 'POST'])
 def setLights():
     data = request.json
-    # zone = data.zone
-    zone = 0
-    colors = [ c[1:] for c in data['colors'] ]
+    room = [ r for r in rooms if r.name == data[ 'room' ] ][ 0 ]
 
-    HOST = "10.0.0.252"  # The server's hostname or IP address
+    global queue
+    queue.append({ 'room': room, 'colors': data[ 'colors' ] })
 
-    colorArr = ['0'+ str(zone)]
-
-    while len(colorArr) < (STRIP_LEN + 2):
-        for color in colors:
-            colorArr.append(color)
-
-    colorString = "".join(colorArr)
-
-    # for test route
-    global currArr
-    currArr= [ "#" + c for c in colorArr ]
-
-
-    arr = bytearray.fromhex(colorString)
-
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((HOST, PORT))
-    s.sendall(arr)
-    s.close()
+    if len(queue) > 10:
+        for i in range(4):
+            queue.pop( i * 2 + 1 )
 
     return 'success'
 
-@app.route('/test/', methods=['GET'])
-def test():
-    return render_template('test.html', colors=currArr)
+
+def sendData():
+    global queue
+
+    if len(queue) > 0:
+        data = queue.pop(0)
+        room = data[ 'room' ]
+        colors = data[ 'colors' ]
+
+        if not room.open():
+            ret = room.set( colors )
+            if ret and len(queue) == 0: 
+                queue.insert( 0, data )
+                print('retry: ', queue)
+        
+
+    threading.Timer( DELAY, sendData ).start()
+
+sendData()
+
+# @app.route('/test/', methods=['GET'])
+# def test():
+#     print('here')
+#     print(currArr)
+#     return render_template('test.html', colors=currArr)
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=3001)

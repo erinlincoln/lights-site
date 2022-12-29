@@ -1,9 +1,13 @@
-import React from 'react'
+import React, { useContext } from 'react'
+import { StateContext } from './LightsDisp';
 
-export default function Restart({setPickingZone, zone}) {
+export default function Restart() {
+
+  const { setPickingRoom } = useContext( StateContext );
+
   return (
     <div>
-        <h4 onClick={() => setPickingZone(true)}>zone: {zone}</h4>
+        <h4 onClick={() => setPickingRoom(true)}>choose another room</h4>
     </div>
   )
 }

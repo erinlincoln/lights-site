@@ -1,13 +1,16 @@
-import React from 'react';
+import React, { useContext} from 'react';
 import modeChoices from '../modes.js';
+import { StateContext } from './LightsDisp.js';
 import '../style/modeSelect.css';
 
-export default function ModeSelect({setColors, setMode, setChoices}) {
+export default function ModeSelect({ setChoices }) {
+
+  const { setColors, setMode } = useContext( StateContext );
     
     function changeMode(e) {
         const val = e.target.value;
         const valArr = modeChoices[ val ];
-        setMode(val);
+        setMode({ name: val, length: modeChoices[val].length });
         setChoices( valArr )
         setColors( [...Array(valArr.length)] )
     }
@@ -21,7 +24,7 @@ export default function ModeSelect({setColors, setMode, setChoices}) {
             <option value="sunlight">sunlight</option>
             <option value="single">single color</option>
             {/* <option value="rainbow">rainbow</option> */}
-            <option value="stripped">stripped</option>
+            <option value="stripped">striped</option>
         </select>
     </div>
   )

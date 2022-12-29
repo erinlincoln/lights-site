@@ -1,11 +1,9 @@
-#color-select {
-    display: flex;
-    margin-top: 5vh;
-    justify-content: space-evenly;
+
+.choice-container {
+    /* width: 60vw; */
+    /* margin-right: 5vw; */
+    border-radius: 10px;
+    /* min-height: 30vh; */
+    margin: 10px;
 }
 
-#choice-container {
-    width: 60vw;
-    margin-right: 5vw;
-    border-radius: 10px;
-}

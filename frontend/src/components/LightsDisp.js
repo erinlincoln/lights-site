@@ -1,22 +1,27 @@
-import React, {useState} from 'react';
-import ZoneDisp from './ZoneDisp';
+import React, {createContext, useState} from 'react';
+import RoomDisp from './RoomDisp';
 import ModeDisp from './ModeDisp';
 import '../style/lightsDisp.css';
 
+export const StateContext = createContext(null);
+
 function LightsDisp() {
-    const [ zone, setZone ] = useState();
+    const [ room, setRoom ] = useState();
     const [ mode, setMode ] = useState();
     const [ colors, setColors ] = useState([]);
-    const [ pickingZone, setPickingZone ] = useState( true );
+    const [ pickingRoom, setPickingRoom ] = useState( true );
+    const value = { room, setRoom, mode, setMode, colors, setColors, 
+        pickingRoom, setPickingRoom };
 
     return (
-        <div id='content'>
-            { pickingZone
-                ? <ZoneDisp setZone={setZone} setPickingZone={setPickingZone}/>
-                : <ModeDisp mode={mode} setMode={setMode} colors={colors} setColors={setColors} zone={zone} setPickingZone={setPickingZone}/>
-            }
-        </div>
-        
+        <StateContext.Provider value={ value } >
+            <div id='content'>
+                { pickingRoom
+                    ? <RoomDisp />
+                    : <ModeDisp />
+                }
+            </div>
+        </StateContext.Provider>
     )
 }
 
