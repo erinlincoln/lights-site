@@ -36,7 +36,7 @@ export default function ColorSelect({index, disp }) {
     }
 
     async function sendData() {
-        await fetch('http://192.168.0.10:3001/lights/', {
+        await fetch('http://192.168.0.21:3001/lights/', {
             method: 'POST',
             mode: 'cors',
             headers: {

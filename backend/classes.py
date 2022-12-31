@@ -39,6 +39,7 @@ class Zone:
 
         result = True
         for l in range( self.length ):
+            print(l)
             arr = self.bitArr( l, colors )   
             ret = self.send( arr )
             if not ret: result = False
