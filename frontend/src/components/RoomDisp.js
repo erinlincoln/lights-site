@@ -3,14 +3,14 @@ import bed from '../images/bed.png';
 import computer from '../images/computer.png';
 import '../style/zoneDisp.css'
 import { useContext } from 'react';
-import { StateContext } from './LightsDisp';
+import { StateContext } from './Main';
 
 
 function RoomDisp() {
-    const { setRoom, setPickingRoom } = useContext( StateContext );
+    const { setData, setPickingRoom } = useContext( StateContext );
 
     function pickRoom( name ) {
-        setRoom( name ); 
+        setData( { type: 'room', room: name } ); 
         setPickingRoom(false);
     }
 

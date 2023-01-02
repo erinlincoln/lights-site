@@ -3,6 +3,7 @@ from flask_cors import CORS
 from setup import rooms
 import threading
 import time
+import modes
 
 app = Flask(__name__)
 CORS(app)
@@ -13,10 +14,10 @@ DELAY = 0.02 # delay between sending data
 @app.route('/lights/', methods=['GET', 'POST'])
 def setLights():
     data = request.json
-    room = [ r for r in rooms if r.name == data[ 'room' ] ][ 0 ]
+    room = [ r for r in rooms if r.name == data[ 'area' ][ 'room' ] ][ 0 ]
 
     global queue
-    queue.append({ 'room': room, 'colors': data[ 'colors' ] })
+    queue.append( { **data, 'area': { **data[ 'area' ], 'room': room } } )
 
     if len(queue) > 10:
         for i in range(4):
@@ -25,18 +26,36 @@ def setLights():
     return 'success'
 
 
+def getMode( type):
+    modes_dict = {
+        'single-color': modes.LEDMode_Solid,
+        'multi-color': modes.LEDMode_Alternating
+    }
+
+    return modes_dict[ type ]
+
+
 def sendData():
     global queue
 
+    # give strips update
+    ms_since_epoch = round(time.time()*1000)
+    for room in rooms:
+        room.updateStrips(ms_since_epoch)
+
     if len(queue) > 0:
         data = queue.pop(0)
-        room = data[ 'room' ]
-        colors = data[ 'colors' ]
+        print(data)
+        room = data[ 'area' ][ 'room' ]
+        mode = getMode(data[ 'mode' ][ 'type' ])
+
+        # update data to have mode object
+        data = { **data, "mode": mode }
 
         if not room.open():
-            ms_since_epoch = round(time.time()*1000)
-            room.updateStrips(ms_since_epoch)
-            ret = room.sendall()
+            # ms_since_epoch = round(time.time()*1000)
+            # room.updateStrips(ms_since_epoch)
+            ret = room.sendAll(data)
             if ret and len(queue) == 0: 
                 queue.insert( 0, data )
                 print('retry: ', queue)

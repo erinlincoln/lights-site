@@ -1,6 +1,6 @@
 // import logo from './logo.svg';
 import logo from './images/apollo-2.png'
-import LightsDisp from './components/LightsDisp';
+import LightsDisp from './components/Main';
 import './App.css';
 
 function App() {

@@ -3,10 +3,15 @@ Here are my thoughts on JSON data sent from the frontend to the backend
 data format changes for each mode, but all will have the basic format:
 
 {
-    "room": 
-    "zone"
-    "strip"
-    "mode": "<mode>" (string)
+    "area": {
+        "room": 
+        "zone"
+        "strip"
+    },
+    "mode": { 
+        name: "<mode_name>" (string) (ignore),
+        type: "<mode_type>"
+    },
     "data": {
         (Mode-dependent data here)
     }

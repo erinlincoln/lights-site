@@ -1,3 +1,5 @@
+import time
+
 
 # An abstract class representing the "mode" a strip is in
 class LEDMode:
@@ -23,15 +25,45 @@ class LEDMode:
         b = color[5:7]
         return (r, g, b)
 
+# Updating mode: an abstract class for a mode that will need to update
+class Updating_LEDMode(LEDMode):
+    def __init__( self, length, colors, delay ):
+        super().__init__(length)
+        self.delay = delay
+        self.colors = colors
+        self.index = 0
+        self.lastUpdate = time.time()
+        self.data = []
+
+    def getData(self, t):
+        # if time to update, update index
+        if self.lastUpdate - t > self.delay:
+            self.update()
+            
+            self.data = []
+            for i in range( self.length / len( self.colors[ self.index ])):
+                for color in self.colors[ self.index ]:
+                    self.data.append( color )
+        
+        return self.data
+
+    # update the index of colors to display
+    def update(self):
+        self.index += 1
+        
+        if self.index >= len(self.colors):
+            self.index = 0
+            
+
 # Solid mode: maintains a constant color on the strip
 class LEDMode_Solid(LEDMode):
     # color as string '#RRGGBB'
-    def __init__(self, length, color):
+    def __init__(self, length, colors):
         super().__init__(length)
-        self.color = color
+        self.color = colors[ 0 ]
         self.data = []
         for i in range(self.length):
-            self.data.append(color)
+            self.data.append(self.color[1:])
 
     def getData(self, t):
         return self.data # solid color is independent of time
@@ -39,19 +71,22 @@ class LEDMode_Solid(LEDMode):
 # Alternating mode: alternates between two colors
 class LEDMode_Alternating(LEDMode):
     # color as string '#RRGGBB'
-    def __init__(self, length, color1, color2):
+    def __init__(self, length, colors):
         super().__init__(length)
-        self.color1 = color1
-        self.color2 = color2
+        self.colors = colors
         self.data = []
-        for i in range(self.length / 2):
-            self.data.append(color1)
-            self.data.append(color2)
+        for i in range(self.length / len(self.colors)):
+            for color in self.colors:
+                self.data.append(color)
 
     def getData(self, t):
         return self.data
 
+class Updating_LEDMode_Alternating(LEDMode):
+    def __init__(self, length):
+        super().__init__(length)
+
 
 # Default mode is off
 def get_default_mode(length):
-    return LEDMode_Solid(length, '#000000')
+    return LEDMode_Solid(length, [ '#000000' ])
