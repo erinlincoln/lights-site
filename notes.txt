@@ -1,0 +1,57 @@
+Here are my thoughts on JSON data sent from the frontend to the backend
+
+data format changes for each mode, but all will have the basic format:
+
+{
+    "room": 
+    "zone"
+    "strip"
+    "mode": "<mode>" (string)
+    "data": {
+        (Mode-dependent data here)
+    }
+}
+
+We can also add other non-mode-dependent data later (such as timestamp, etc) as needed
+
+For specific modes:
+
+{
+    "mode": "Solid",                // Displays a solid color
+    "data": {
+        "color": "#XXXXXX"          // The color to display
+    }
+}
+
+{
+    "mode": "Gradient",             // Displays a gradient centered at a point, fading from one color to another
+    "data": {
+        "color1": "#XXXXXX",        // The color at the center of the gradient
+        "color2": "#XXXXXX",        // The color at the edge of the gradient
+        "pos": "##",                // The position on the strip, as a percentage (?), the gradient is centered at
+        "strength": "##"            // The "strength" of the gradient- how spread out it is, also as a percentage
+    }
+}
+
+{
+    "mode": "Rainbow",              // Displays a rainbow that changes over time
+    "data": {
+        "speed": "##"               // The speed of the rainbow changing (TODO figure out what values work here)
+    }
+}
+
+{
+    "mode": "Stars",                // Displays stars that flicker on and off
+    "data": {
+        "speed": "##"               // The speed of the rainbow changing (TODO figure out what values work here)
+    }
+}
+
+{
+    "mode": "MeterColor",           // Changes each meter of the strand to a solid color
+    "data": {
+        [
+
+        ]
+    }
+}
