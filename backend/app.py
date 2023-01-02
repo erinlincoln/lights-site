@@ -2,13 +2,13 @@ from flask import Flask, request, render_template
 from flask_cors import CORS
 from setup import rooms
 import threading
+import time
 
 app = Flask(__name__)
 CORS(app)
 
 queue = []
 DELAY = 0.02 # delay between sending data
-
 
 @app.route('/lights/', methods=['GET', 'POST'])
 def setLights():
@@ -34,7 +34,9 @@ def sendData():
         colors = data[ 'colors' ]
 
         if not room.open():
-            ret = room.set( colors )
+            ms_since_epoch = round(time.time()*1000)
+            room.updateStrips(ms_since_epoch)
+            ret = room.sendall()
             if ret and len(queue) == 0: 
                 queue.insert( 0, data )
                 print('retry: ', queue)
