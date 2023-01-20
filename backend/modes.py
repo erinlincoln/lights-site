@@ -8,11 +8,17 @@ class LEDMode:
         self.data = []
         for i in range(self.length):
             self.data.append("#000000")
+        self.init = True
 
-    # Gets the data the LEDs should display at time t, depending on parameter param
-    # OVERRIDE THIS!
-    def getData(self, t):
-        return self.data
+    # tell leds to progress
+    def progress(self):
+        init = False
+
+        if self.init:
+            init = True
+            self.init = False
+
+        return init or self.progressMode()
 
     # Utility function for converting R, G, and B values to color strings ('#000000')
     def rgbToColor(r, g, b):
@@ -26,7 +32,7 @@ class LEDMode:
         return (r, g, b)
 
 # Updating mode: an abstract class for a mode that will need to update
-class Updating_LEDMode(LEDMode):
+class DynamicLEDMode(LEDMode):
     def __init__( self, length, colors, delay ):
         super().__init__(length)
         self.delay = delay
@@ -35,7 +41,7 @@ class Updating_LEDMode(LEDMode):
         self.lastUpdate = time.time()
         self.data = []
 
-    def getData(self, t):
+    def progressMode(self, t):
         # if time to update, update index
         if self.lastUpdate - t > self.delay:
             self.update()
@@ -63,10 +69,10 @@ class LEDMode_Solid(LEDMode):
         self.color = colors[ 0 ]
         self.data = []
         for i in range(self.length):
-            self.data.append(self.color[1:])
+            self.data.append(self.color)
 
-    def getData(self, t):
-        return self.data # solid color is independent of time
+    def progressMode(self):
+        return False
 
 # Alternating mode: alternates between two colors
 class LEDMode_Alternating(LEDMode):

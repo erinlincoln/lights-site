@@ -21,10 +21,32 @@ class Room:
             index = data[ 'area' ][ 'zone' ]
             self.zones[ index ].sendAll( data )
 
-    # Updates all LED strips' data with new time
-    def updateStrips(self, t):
-        for zone in self.zones:
-            zone.updateData(t)
+    # tell mode of strips to update
+    def updateStrips(self, zones = None, strips = None):
+        if zones == None:
+            zones = self.zones; 
+
+        for zone in zones:
+            zone.updateStrips(strips)
+
+    # change mode of strip(s)
+    def changeMode( self, mode, zones, strips ):
+        if zones == None:
+            zones = self.zones
+        else:
+            zones = [ self.zones[i] for i in zones ]
+
+        for zone in zones:
+            zone.changeMode(mode, strips)
+
+    # # change mode of all strips in room
+    # def changeAllModes(self, mode):
+    #     for zone in self.zones:
+    #         zone.changeAllModes(mode)
+
+    # # change mode of a single strip in the room
+    # def changeStripMode(self, zoneIndex, stripIndex, mode):
+    #     self.zones[zoneIndex].changeStripMode(stripIndex, mode)
 
     def __eq__( self, obj ):
         return obj.name == self.name
@@ -42,51 +64,68 @@ class Strip:
         self.length = length
         self.most_recent_timestamp = -1
         self.mode = modes.get_default_mode(self.length)
-        self.data = []
-        for i in range(length):
-            self.data.append('000000')
         self.host = host
         
+    @property
+    def data(self):
+        return self.mode.data
 
-    # Updates the data of a strip depending on the current mode
-    def updateData(self, t):
-        prevData = self.data
-        self.data = self.mode.getData(t)
-        self.most_recent_timestamp = t
-        if prevData != self.data:
-            self.send(self.host, None)
+    # tell mode to update
+    def update(self):
+        # tell mode to update and get var back whether to send new data
+        send = self.mode.progress()
 
-    # Sets the mode of this strip (does not update data)
-    def setMode(self, mode):
-        self.mode = mode
+        # if strip data is updated, send new data
+        if send:
+            self.send()
+
+    # sets new mode of strip
+    def changeMode(self, mode):
+        # set new previous mode
+        self.prevMode = self.mode
+
+        # set new mode
+        self.mode = self.getMode(mode)
+
+    #TODO: replace with real modes - off as placeholder
+    # transform mode data to a mode object
+    def getMode(self, mode):
+        return modes.LEDMode_Solid(self.length, [ '#A020F0' ])
 
     # Sends the data to the pico
-    def send( self, host, data ):
-
-        # update data with inputted data transformed into an array of colors
-        if data: self.data = self.transformData(data)
+    def send( self ):
 
         # Append index to front of data
         data_final = ['0'+ str(self.index) ]
+        print(data_final)
         for color in self.data:
             data_final.append(color[1:])
         data_final = bytearray.fromhex("".join(data_final))
 
+        print('about to send')
+
         self.open = True
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.socket.connect(( host, PORT ))
-        self.socket.sendall( data_final )
-        self.open = False
+        self.socket.connect(( self.host, PORT ))
+
+        try:
+            print('trying to send')
+            # attempt to read to see if socket is closed
+            self.socket.settimeout(2)
+            # self.socket.recv(1)
+            self.socket.sendall( data_final )
+        except:
+            print('error on reading')
+            ConnectionAbortedError('upload failed - try again')
 
         result = str(self.socket.recv(7))
 
-        print('here1')
+        print('closing socket')
 
-        print( result )
-
+        self.socket.shutdown('SHUT_RDWR')
         self.socket.close()
 
-        print('here')
+        self.open = False
 
         return result == 'Success'
         # return True
@@ -106,9 +145,9 @@ class Strip:
         # return bytearray of colors
         return bytearray.fromhex(colorString)
 
-    def transformData(self, data ):
-        self.setMode( data[ 'mode' ]( self.length, **data['data']))
-        return data['data'][ 'colors' ]
+    # def transformData(self, data ):
+    #     self.setMode( data[ 'mode' ]( self.length, **data['data']))
+    #     return data['data'][ 'colors' ]
 
 class Zone:
     def __init__( self, host, strip_count, strip_lengths):
@@ -122,10 +161,15 @@ class Zone:
         self.currColors = []
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-    # Updates the data in a zone with a new time. Does not send anything.
-    def updateData(self, t):
-        for strip in self.strips:
-            strip.updateData(t)
+    # tell mode of strips to update
+    def updateStrips(self, strips):
+        if strips == None:
+            strips = self.strips
+        else:
+            strips = [ self.strips[i] for i in strips ]
+
+        for strip in strips:
+            strip.update()
     
     # Sends all strip data
     def sendAll(self, data):
@@ -137,15 +181,25 @@ class Zone:
         else:
             index = data[ 'area' ][ 'strip' ]
             self.strips[ index ].send(self.host, data)
-    
-    # Sets the mode of a strip
-    def setStripMode(self, index, mode):
-        self.strips[index].setMode(mode)
 
-    # Sets the mode of all strips
-    def setAllModes(self, mode):
-        for strip in self.strips:
-            strip.setMode(mode)
+    # change mode of strip(s)
+    def changeMode(self, mode, strips):
+        if strips == None:
+            strips = self.strips
+        else:
+            strips = [ self.strips[i] for i in strips ]
+
+        for strip in strips:
+            strip.changeMode(mode)
+    
+    # # Sets the mode of a strip
+    # def changeStripMode(self, index, mode):
+    #     self.strips[index].changeMode(mode)
+
+    # # Sets the mode of all strips
+    # def changeAllModes(self, mode):
+    #     for strip in self.strips:
+    #         strip.changeMode(mode)
 
     def open(self):
         return len([ strip for strip in self.strips if strip.open ]) > 0
