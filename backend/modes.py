@@ -129,12 +129,6 @@ class LEDMode_Gradient(StaticLEDMode):
             l = [ middle[i] + ( lastRange[i] * j ) if middle[i] + ( lastRange[i] * j ) > 0  else 0 for i in range(3) ] 
             self.data.append(self.rgbToColor(*l))
 
-        
-
-
-
-
-
 class Updating_LEDMode_Alternating(LEDMode):
     def __init__(self, length):
         super().__init__(length)
@@ -143,3 +137,19 @@ class Updating_LEDMode_Alternating(LEDMode):
 # Default mode is off
 def get_default_mode(length):
     return LEDMode_Solid(length, [ '#000000' ])
+
+# Creates a mode from the json received from an API request
+def create_mode(length, mode_json):
+    # Previously, the presence of the 'name' and 'data' properties have been verified
+    # The only error checking we need to do is the contents of 'data' and the validity of 'name'
+
+    match mode_json["name"]:
+        case "off":
+            return LEDMode_Solid(length, ["#000000"])
+        case "solid":
+            if "colors" not in mode_json["data"] or len(mode_json["data"]["colors"]) != 1:
+                return None
+            return LEDMode_Solid(length, [mode_json["data"]["colors"][0]])
+        # TODO implement others
+        
+    return None
