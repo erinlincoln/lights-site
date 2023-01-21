@@ -14,4 +14,4 @@ livingRoom = Room( 'livingRoom', [ l3, l4 ])
 bedroom = Room( 'bedroom', [ l2 ])
 
 # setup array of rooms
-rooms = [ office, livingRoom, bedroom ]
+rooms = [ office, livingRoom ]

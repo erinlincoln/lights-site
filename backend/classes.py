@@ -1,5 +1,8 @@
 import socket
 import modes
+from threading import Semaphore
+import json
+import ast
 
 PORT = 1234  # The port used by the server
 STRIP_LEN = 100 # LEDS on a strip
@@ -26,8 +29,13 @@ class Room:
         if zones == None:
             zones = self.zones; 
 
+        result = True
+
         for zone in zones:
-            zone.updateStrips(strips)
+            res = zone.updateStrips(strips)
+            if not res: result = False
+
+        return result
 
     # change mode of strip(s)
     def changeMode( self, mode, zones, strips ):
@@ -65,6 +73,8 @@ class Strip:
         self.most_recent_timestamp = -1
         self.mode = modes.get_default_mode(self.length)
         self.host = host
+        self.semaphore = Semaphore() # Semaphore used to protect self.mode
+        # Right now this semaphore essentially does nothing
         
     @property
     def data(self):
@@ -72,41 +82,75 @@ class Strip:
 
     # tell mode to update
     def update(self):
+        
+        self.semaphore.acquire()
+        # CRITICAL SECTION
+
         # tell mode to update and get var back whether to send new data
         send = self.mode.progress()
 
+        result = True
+
         # if strip data is updated, send new data
         if send:
-            self.send()
+            result = self.send()
+
+        # END CRITICAL SECTION
+        self.semaphore.release()
+
+        return result
 
     # sets new mode of strip
     def changeMode(self, mode):
+        
+        self.semaphore.acquire()
+        # CRITICAL SECTION
+
         # set new previous mode
         self.prevMode = self.mode
 
         # set new mode
         self.mode = self.getMode(mode)
 
+        # END CRITICAL SECTIOn
+        self.semaphore.release()
+
     #TODO: replace with real modes - off as placeholder
     # transform mode data to a mode object
     def getMode(self, mode):
-        return modes.LEDMode_Solid(self.length, [ '#A020F0' ])
+        colors = ast.literal_eval(mode['colors'])
+
+        match mode['name']:
+            case 'solid':
+                return modes.LEDMode_Solid(self.length, colors)
+            case 'multi':
+                return modes.LEDMode_Alternating(self.length, colors, mode.get('width'))
+            case 'gradient':
+                return modes.LEDMode_Gradient(self.length, colors, mode.get('center'))
+            case _:
+                print('INVALID MODE: ' + mode['name'])
+        # return modes.LEDMode_Solid(self.length, [ '#000000' ])
 
     # Sends the data to the pico
+    # CALL THIS FROM A CRITICAL SECTION ONLY!
     def send( self ):
 
         # Append index to front of data
         data_final = ['0'+ str(self.index) ]
-        print(data_final)
         for color in self.data:
             data_final.append(color[1:])
         data_final = bytearray.fromhex("".join(data_final))
 
         print('about to send')
+        print(self.host)
 
         self.open = True
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+        print('about to connect')
         self.socket.connect(( self.host, PORT ))
+
+        result = False
 
         try:
             print('trying to send')
@@ -114,21 +158,21 @@ class Strip:
             self.socket.settimeout(2)
             # self.socket.recv(1)
             self.socket.sendall( data_final )
-        except:
-            print('error on reading')
+
+            result = str(self.socket.recv(7))[2:-1]
+        except Exception as e:
+            print('error on reading', e)
             ConnectionAbortedError('upload failed - try again')
 
-        result = str(self.socket.recv(7))
 
         print('closing socket')
 
-        self.socket.shutdown('SHUT_RDWR')
+        self.socket.shutdown(socket.SHUT_RDWR)
         self.socket.close()
 
         self.open = False
 
         return result == 'Success'
-        # return True
 
     def bitArr( self ):
         # indicate strip to write to
@@ -168,8 +212,13 @@ class Zone:
         else:
             strips = [ self.strips[i] for i in strips ]
 
+        result = True
+
         for strip in strips:
-            strip.update()
+            res = strip.update()
+            if not res: result = False
+
+        return result
     
     # Sends all strip data
     def sendAll(self, data):

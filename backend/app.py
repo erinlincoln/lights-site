@@ -11,11 +11,17 @@ CORS(app)
 
 queue = []
 updateInProgress = False
-DELAY = 0.02 # delay between sending data
+DELAY = 0.2 # delay between sending data
+
+# Global semaphore used to control access to the mode queue
+queue_sem = threading.Semaphore(1)
 
 @app.route('/lights/', methods=['GET', 'POST'])
 def setLights():
-    global queue
+    global queue, queue_sem
+
+    queue_sem.acquire()
+    # BEGIN CRITICAL SECTION
 
     # get data and get room object based on room name
     data = request.json
@@ -29,8 +35,16 @@ def setLights():
     # add data to the queue with room object
     queue.append( { **data, 'area': { **data[ 'area' ], 'room': room } } )
 
+    # END CRITICAL SECTION
+    queue_sem.release()
+
     return 'added to queue'
 
+
+@app.errorhandler(Exception)
+def handle_exception(e):
+    print(e)
+    return str(e)
 
 # def getMode( type):
 #     modes_dict = {
@@ -46,20 +60,17 @@ def scheduleData(data):
 
 
 def sendData():
-    global queue
-    global updateInProgress
+    global queue, queue_sem
 
+    # Infinite loop over queue
     while True:
 
-        # if another thread isn't in progress
-        if not updateInProgress:
+        # update room
+        for room in rooms:
+            room.updateStrips()
 
-            # indicate process is running
-            updateInProgress = True
-
-            # update room
-            for room in rooms:
-                room.updateStrips()
+        if queue_sem.acquire(timeout=0.1):
+            # BEGIN CRITICAL SECTION
 
             # if there is data in the queue
             if len(queue) > 0:
@@ -95,11 +106,16 @@ def sendData():
 
                 # if still can delete, pop data from queue
                 if canDelete:
-                    queue.pop()
-            
-            # indicate process is done
-            updateInProgress = False
+                    queue.pop(0)
 
+            # END CRITICAL SECTION
+            queue_sem.release()
+
+        else:
+            # Failed to grab semaphore, print debug line
+            print("Failed to grab semaphore: data thread")
+
+        # Wait until next loop
         time.sleep(DELAY)
 
     # start timer over
@@ -138,6 +154,12 @@ def sendData():
 #     print(currArr)
 #     return render_template('test.html', colors=currArr)
 
-if __name__ == '__main__':
+def run_backend():
     app.run(host='0.0.0.0', port=3001)
-    sendData()
+
+if __name__ == '__main__':
+    t_bend = threading.Thread(target = run_backend)
+    t_data = threading.Thread(target = sendData)
+    
+    t_bend.start()
+    t_data.start()
