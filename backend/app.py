@@ -3,9 +3,7 @@ from flask_cors import CORS
 from setup import strips
 import threading
 import time
-from modes import create_mode
-from classes import Strip
-import json
+from modes.create_mode import create_mode
 
 app = Flask(__name__)
 CORS(app)
@@ -124,7 +122,7 @@ def sendData():
 
         # Update all strips
         for strip in strips.values():
-            strip.update()
+            strip.progress(time.time() * 1000)
 
         # Wait until next loop
         time.sleep(DELAY)

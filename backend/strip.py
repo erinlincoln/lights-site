@@ -1,5 +1,5 @@
 import socket
-import modes
+from modes.basic_modes import get_default_mode
 from threading import Semaphore
 import json
 import ast
@@ -13,7 +13,7 @@ class Strip:
         self.index = index
         self.length = length
         self.most_recent_timestamp = -1
-        self.mode = modes.get_default_mode(self.length)
+        self.mode = get_default_mode(self.length)
         self.host = host
         self.semaphore = Semaphore() # Semaphore used to protect self.mode
         # Right now this semaphore essentially does nothing

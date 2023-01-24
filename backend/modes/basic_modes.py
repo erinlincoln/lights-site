@@ -10,20 +10,11 @@ class LEDMode:
         for i in range(self.length):
             self.data.append("#000000")
         self.init = True
+        self.last_t = time.time()
 
-    # tell leds to progress
-    def progress(self):
-        init = False
-
-        # checks if needs to send to initialize self
-        if self.init:
-            init = True
-            self.init = False
-
-        return init or self.progressMode()
-
-    def progressMode(self):
-        print('ERROR - NEED TO IMPLEMENT PROGRESS MODE')
+    # Tell leds to progress. This does nothing for static modes.
+    def progress(self, t):
+        self.last_t = t
 
     # Utility function for converting R, G, and B values to color strings ('#000000')
     def rgbToColor(self, r, g, b):
@@ -37,35 +28,6 @@ class LEDMode:
         b = int(color[5:7], 16)
         return (r, g, b)
 
-# Updating mode: an abstract class for a mode that will need to update
-class DynamicLEDMode(LEDMode):
-    def __init__( self, length, colors, delay ):
-        super().__init__(length)
-        self.delay = delay
-        self.colors = colors
-        self.index = 0
-        self.lastUpdate = time.time()
-        self.data = []
-
-    def progressMode(self, t):
-        # if time to update, update index
-        if self.lastUpdate - t > self.delay:
-            self.update()
-            
-            self.data = []
-            for i in range( self.length / len( self.colors[ self.index ])):
-                for color in self.colors[ self.index ]:
-                    self.data.append( color )
-        
-        return self.data
-
-    # update the index of colors to display
-    def update(self):
-        self.index += 1
-        
-        if self.index >= len(self.colors):
-            self.index = 0
-
 # static mode: abstract class for a mode that doesn't need to update
 class StaticLEDMode(LEDMode):
     # color as string '#RRGGBB'
@@ -76,9 +38,6 @@ class StaticLEDMode(LEDMode):
         for i in range( math.ceil(length / len(self.colors))):
             for color in self.colors:
                 self.data.append(color)
-
-    def progressMode(self):
-        return False
             
 
 # Solid mode: maintains a constant color on the strip
@@ -88,17 +47,16 @@ class LEDMode_Solid(StaticLEDMode):
         super().__init__(length, colors)
 
 
-# Alternating mode: alternates between two colors
-class LEDMode_Alternating(StaticLEDMode):
+# Multicolor mode: alternates between any number of colors
+class LEDMode_MultiColor(StaticLEDMode):
     # color as string '#RRGGBB'
-    def __init__(self, length, colors, width = 1):
+    def __init__(self, length, colors):
         super().__init__(length, colors)
-        if width == None: width = 1
         
         self.data = []
-        for i in range(math.ceil(self.length / len(self.colors) / width )):
+        for i in range(math.ceil(self.length / len(self.colors))):
             for color in self.colors:
-                [ self.data.append(color) for i in range(width) ]
+                self.data.append(color)
 
 class LEDMode_Gradient(StaticLEDMode):
     def __init__(self, length, colors, center = 0.5):
@@ -129,27 +87,41 @@ class LEDMode_Gradient(StaticLEDMode):
             l = [ middle[i] + ( lastRange[i] * j ) if middle[i] + ( lastRange[i] * j ) > 0  else 0 for i in range(3) ] 
             self.data.append(self.rgbToColor(*l))
 
-class Updating_LEDMode_Alternating(LEDMode):
-    def __init__(self, length):
-        super().__init__(length)
+class LEDMode_RunningMultiColor(LEDMode):
 
+    # The max speed of this mode.
+    # A speed of 1 will rotate pixels 100 times (one standard loop) every SPEED_MULTIPLIER_MS ms.
+    SPEED_MULTIPLIER_MS = 1000 # units ms
+
+    def __init__(self, length, colors, speed):
+        super().__init__(length)
+        self.colors = colors
+        self.num_colors = len(colors)
+        self.speed = speed
+        self.offset = 0 # The offset of the colors array on the LED strip
+
+        # Initial data is beginning of colors, repeated as necessary
+        self.data = []
+        for i in range(length):
+            self.data.append(colors[i % self.num_colors])
+
+    def progress(self, t):
+        # Calculate change in time
+        delta_t = t - self.last_t
+
+        # Calculate number of offsets
+        num_pixels_offset = int(delta_t) * self.speed * 100 / self.SPEED_MULTIPLIER_MS
+        self.offset = (self.offset + num_pixels_offset) % len(self.colors)
+
+        # Update pixels
+        for i in range(self.length):
+            self.data[i] = self.colors[(self.offset + i) % len(self.colors)]
+
+        # Update last time
+        self.last_t = t
 
 # Default mode is off
 def get_default_mode(length):
     return LEDMode_Solid(length, [ '#000000' ])
 
-# Creates a mode from the json received from an API request
-def create_mode(length, mode_json):
-    # Previously, the presence of the 'name' and 'data' properties have been verified
-    # The only error checking we need to do is the contents of 'data' and the validity of 'name'
 
-    match mode_json["name"]:
-        case "off":
-            return LEDMode_Solid(length, ["#000000"])
-        case "solid":
-            if "colors" not in mode_json["data"] or len(mode_json["data"]["colors"]) != 1:
-                return None
-            return LEDMode_Solid(length, [mode_json["data"]["colors"][0]])
-        # TODO implement others
-        
-    return None
