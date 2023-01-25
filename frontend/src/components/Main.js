@@ -14,7 +14,7 @@ function updateData ( state, action ) {
         case 'strip':
             return { ...state, area: { ...state.area, strip: action.strip }};
         case 'mode':
-            return { ...state, mode: action.mode, data: {} };
+            return { ...state, mode: action.mode, payload: { name: action.mode } };
         case 'data':
             return { ...state, data: action.data };
         default: 

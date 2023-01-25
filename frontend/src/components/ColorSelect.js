@@ -27,11 +27,11 @@ export default function ColorSelect({index, disp }) {
     // send change if all colors are set
     useEffect( () => {
         // if the color is set
-        if ( mode === 'single-color' || 'off' && color ) {
+        if ( mode === 'single' || 'off' && color ) {
             sendChange();
 
         // if all colors are set
-        } else if ( mode === 'multi-color' && data.data.colors && !data.data.colors.includes( undefined ) ) {
+        } else if ( mode === 'multi' && data.data.colors && !data.data.colors.includes( undefined ) ) {
             sendChange();
         }
     }, [ color ])
@@ -65,7 +65,7 @@ export default function ColorSelect({index, disp }) {
     return (
         <ColorContext.Provider value={value}>
             <div style={{ backgroundColor: color != '#000000' ? color : undefined }} className='choice-container'>
-                { disp.type === 'single-color' && 
+                { disp.type === 'single' && 
                     <SingleColor color={color} setColor={setColor} index={index}/> 
                     }
                 { disp.type === 'color-slider' &&

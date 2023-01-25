@@ -1,0 +1,25 @@
+#message-container {
+    background-color: #a94c2a;
+}
+
+#message-container > h1 {
+    font-weight: 500;
+}
+
+/* #user-container {
+    background-color: #D8A24B;
+} */
+
+#new-profile-btn {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.1rem;
+    color: white;
+    background-color: #512706;
+    border: none;
+}
+
+#new-profile-btn:hover {
+    background-color: #833f0c;
+    color: white;
+}
