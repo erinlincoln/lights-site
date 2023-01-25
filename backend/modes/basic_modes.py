@@ -12,9 +12,15 @@ class LEDMode:
         self.init = True
         self.last_t = time.time()
 
-    # Tell leds to progress. This does nothing for static modes.
+    # Tell leds to progress. This does nothing for static modes. Returns true if an update is required
+    # Override this for dynamic modes
     def progress(self, t):
         self.last_t = t
+
+        # Update only the first time
+        x = self.init
+        self.init = False
+        return x
 
     # Utility function for converting R, G, and B values to color strings ('#000000')
     def rgbToColor(self, r, g, b):
@@ -110,7 +116,7 @@ class LEDMode_RunningMultiColor(LEDMode):
         delta_t = t - self.last_t
 
         # Calculate number of offsets
-        num_pixels_offset = int(delta_t) * self.speed * 100 / self.SPEED_MULTIPLIER_MS
+        num_pixels_offset = int(delta_t * self.speed * 100 / self.SPEED_MULTIPLIER_MS)
         self.offset = (self.offset + num_pixels_offset) % len(self.colors)
 
         # Update pixels
@@ -119,6 +125,9 @@ class LEDMode_RunningMultiColor(LEDMode):
 
         # Update last time
         self.last_t = t
+
+        # Require strip update
+        return True
 
 # Default mode is off
 def get_default_mode(length):

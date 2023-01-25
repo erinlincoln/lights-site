@@ -4,20 +4,26 @@ from setup import strips
 import threading
 import time
 from modes.create_mode import create_mode
+from test_timing import TimingTester
 
 app = Flask(__name__)
 CORS(app)
 
 queue = []
 updateInProgress = False
-DELAY = 0.2 # delay between sending data
+DELAY = 0.02 # delay between sending data
 
 # Global semaphore used to control access to the mode queue
 queue_sem = threading.Semaphore(1)
 
+# Global timers
+tt_setLights = TimingTester("SetLights()")
+
 @app.route('/lights/', methods=['GET', 'POST'])
 def setLights():
     global queue, queue_sem
+
+    tt_setLights.start()
 
     queue_sem.acquire()
     # BEGIN CRITICAL SECTION
@@ -35,6 +41,9 @@ def setLights():
 
     # END CRITICAL SECTION
     queue_sem.release()
+
+    tt_setLights.stop()
+    tt_setLights.print()
 
     return 'added to queue'
 
@@ -60,11 +69,19 @@ def scheduleData(data):
 def sendData():
     global queue, queue_sem, strips
 
+    # Debugging timing
+    tt_sendData = TimingTester("SendData()")
+    tt_queueSem = TimingTester("Queue Sem.")
+    tt_stripUpd = TimingTester("Strip Upd.")
+
     # Infinite loop over queue
     while True:
 
+        tt_sendData.start()
+        tt_queueSem.start()
+
         # Pull in new modes from queue
-        if queue_sem.acquire(timeout=0.1):
+        if queue_sem.acquire(timeout=0.01):
             # BEGIN CRITICAL SECTION
 
             # if there is data in the queue
@@ -107,6 +124,7 @@ def sendData():
                             continue
 
                         # Finally change the mode of the strip
+                        #print("Changing mode of ", strip_json["id"])
                         strip.changeMode(mode)
 
                 # if still can delete, pop data from queue
@@ -120,12 +138,25 @@ def sendData():
             # Failed to grab semaphore, print debug line
             print("Failed to grab semaphore: data thread")
 
+        tt_queueSem.stop()
+        tt_queueSem.print()
+
         # Update all strips
+        tt_stripUpd.start()
+
+        t = time.time() * 1000
         for strip in strips.values():
-            strip.progress(time.time() * 1000)
+            strip.update(t)
+
+        tt_stripUpd.stop()
+        tt_stripUpd.print()
+        
 
         # Wait until next loop
         time.sleep(DELAY)
+
+        tt_sendData.stop()
+        tt_sendData.print()
 
 
 

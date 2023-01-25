@@ -1,4 +1,4 @@
-from classes import Strip
+from strip import Strip
 
 # ip addresses
 ip_office =     '192.168.0.19' # V

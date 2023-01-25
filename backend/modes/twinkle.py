@@ -1,4 +1,4 @@
-from modes import LEDMode
+from modes.basic_modes import LEDMode
 from random import randint, normalvariate
 
 class Twinkle:
@@ -33,7 +33,7 @@ class Twinkle:
 class LEDMode_Twinkle(LEDMode):
 
     # Parameter affecting frequency of twinkle generation
-    # A speed of 1 will cause an average of MAX_FREQUENCY twinkles to generate every ms
+    # A speed of 1 will cause an average of FREQUENCY_MULTIPLIER twinkles to generate every ms
     FREQUENCY_MULTIPLIER = 0.1
 
     # The standard distribution of twinkle generation count in twinkles / ms
@@ -56,7 +56,7 @@ class LEDMode_Twinkle(LEDMode):
     POWER_STDEV = 0.3
 
     def __init__(self, length, colors, speed, frequency):
-        super().__init__(length, colors)
+        super().__init__(length)
 
         if speed == None: speed = 0.5
         if frequency == None: frequency = 0.5
@@ -74,7 +74,7 @@ class LEDMode_Twinkle(LEDMode):
                 # update twinkles
                 strength = self.twinkles[i].update_strength(delta_t)
                 # update data
-                result_color = self.rgbToColor(self.r * strength, self.g * strength, self.b * strength)
+                result_color = self.rgbToColor(int(self.r * strength), int(self.g * strength), int(self.b * strength))
                 self.data[i] = result_color
                 # cleanup
                 if strength <= 0:
@@ -82,19 +82,19 @@ class LEDMode_Twinkle(LEDMode):
 
     def generate_new_twinkles(self, delta_t):
         # number of new twinkles to generate depends on delta_t and frequency
-        avg_num_twinkles = self.frequency * self.MAX_FREQUENCY * delta_t
+        avg_num_twinkles = self.frequency * self.FREQUENCY_MULTIPLIER * delta_t
         
         # use a normal distribution to generate a different number each time
         num_twinkles = normalvariate(avg_num_twinkles, self.TWINKLE_GEN_STDEV)
         num_twinkles = min(self.TWINKLE_GEN_MAX, num_twinkles)
-        num_twinkles = max(self.TWINKLE_GEN_MIN, num_twinkles)
+        num_twinkles = int(max(self.TWINKLE_GEN_MIN, num_twinkles))
 
         avg_lifespan = self.SPEED_MULTIPLIER * self.speed + self.SPEED_MIN
 
         # randomly generate twinkles. Existing twinkles will not be overridden.
         for i in range(num_twinkles):
             # generate location
-            loc = randint(0, self.length)
+            loc = randint(0, self.length-1)
             # generate lifespan
             lifespan = normalvariate(avg_lifespan, self.SPEED_STDEV)
             # generate power
@@ -114,3 +114,5 @@ class LEDMode_Twinkle(LEDMode):
 
         # Update last time
         self.last_t = t
+
+        return True

@@ -1,8 +1,7 @@
 import socket
 from modes.basic_modes import get_default_mode
 from threading import Semaphore
-import json
-import ast
+import time
 
 PORT = 1234  # The port used by the server
 STRIP_LEN = 100 # LEDS on a strip
@@ -23,13 +22,13 @@ class Strip:
         return self.mode.data
 
     # tell mode to update
-    def update(self):
+    def update(self, t):
         
         self.semaphore.acquire()
         # CRITICAL SECTION
 
         # tell mode to update and get var back whether to send new data
-        send = self.mode.progress()
+        send = self.mode.progress(t)
 
         result = True
 
@@ -67,19 +66,19 @@ class Strip:
             data_final.append(color[1:])
         data_final = bytearray.fromhex("".join(data_final))
 
-        print('about to send')
-        print(self.host)
+        #print('about to send')
+        #print(self.host)
 
         self.open = True
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-        print('about to connect')
+        #print('about to connect')
         self.socket.connect(( self.host, PORT ))
 
         result = False
 
         try:
-            print('trying to send')
+            #print('trying to send')
             # attempt to read to see if socket is closed
             self.socket.settimeout(2)
             # self.socket.recv(1)
@@ -88,11 +87,11 @@ class Strip:
             result = str(self.socket.recv(7))[2:-1]
         except Exception as e:
             print('error on reading', e)
-            print('length of data being sent:'. len(data_final))
+            print('length of data being sent:', len(data_final))
             ConnectionAbortedError('upload failed - try again')
 
 
-        print('closing socket')
+        #print('closing socket')
 
         self.socket.shutdown(socket.SHUT_RDWR)
         self.socket.close()

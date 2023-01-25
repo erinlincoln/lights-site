@@ -31,7 +31,7 @@ def create_mode(length, mode_json):
                 return None
             return LEDMode_RunningMultiColor(length, mode_json["data"]["colors"], mode_json["data"]["speed"])
         case "twinkle":
-            if "colors" not in mode_json["data"] or len(mode_json["data"]) != 1:
+            if "colors" not in mode_json["data"] or len(mode_json["data"]["colors"]) != 1:
                 return None
             if "speed" not in mode_json["data"]:
                 return None
