@@ -24,9 +24,16 @@ export default function Login() {
   }
 
   function clickUser(e: any) {
-    const text = e.target.textContent;
+    const name = e.target.textContent;
 
-    setUser(text);
+    setUser({name});
+  }
+
+  function submitName(e: any) { 
+    e.preventDefault();
+    const name = e.target.name.value;
+
+    setUser({name});
   }
 
   return (
@@ -38,26 +45,25 @@ export default function Login() {
         <Logo size={'medium'} />
         <h5 className='text-center text-white mt-3'>what is your name?</h5>
       </div>
-      {
-        hasAcct
-        ? <div className='component col order-3 d-flex flex-column justify-content-between'>
-            <div></div>
-            <div id='user-container' className='d-flex flex-wrap justify-content-center align-content-center'>
-              <Card text='Erin' onClick={clickUser}/>
-              <Card text='Quintin' onClick={clickUser}/>
-            </div>
-            <button id='new-profile-btn' onClick={() => setHasAcct(!hasAcct)} className='m-3 rounded justify-self-end'>
-              { hasAcct? 'make a new profile' : 'choose an existing user'}
-            </button>
-          </div>
-        : <div id='signup-container' className='col-6 order-1'>
-            <label htmlFor="signup">name</label>
-            <input type="text" name="name" id="signup-field" />
-            <button id='new-profile-btn' onClick={() => setHasAcct(!hasAcct)} className='m-3 rounded justify-self-end'>
-              { hasAcct? 'make a new profile' : 'choose an existing user'}
-            </button>
-          </div>
-      }
+      <div className={` ${ hasAcct ? 'col order-3' : 'col-6 order-1'} component d-flex flex-column justify-content-between`}>
+        <div></div>
+        {
+          hasAcct
+            ? <div id='user-container' className='d-flex flex-wrap justify-content-center align-content-center'>
+                <Card text='Erin' onClick={clickUser}/>
+                <Card text='Quintin' onClick={clickUser}/>
+              </div>
+          : <form onSubmit={submitName} id='signup-container' className='d-flex flex-column justify-content-start p-3'>
+              <label htmlFor="signup">name</label>
+              <input type="text" name="name" id="signup-field" />
+              <input id='signup-submit' type="submit" value="sign up" className='mt-3 text-white rounded'/>
+            </form>
+        }
+        <button id='new-profile-btn' onClick={() => setHasAcct(!hasAcct)} className='m-3 rounded justify-self-end'>
+          { hasAcct? 'sign in as a guest' : 'choose an existing user'}
+        </button>
+      </div>
+      
       
     </div>
   )

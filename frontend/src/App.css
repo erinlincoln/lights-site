@@ -1,6 +1,6 @@
 body, #root, .app {
   height: calc(100vh);
-  width: calc(100vw - 1.5rem);
+  width: calc(100vw);
 }
 
 .component {

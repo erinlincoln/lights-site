@@ -5,3 +5,5 @@ enum Color {
     YELLOWORANGE = '#D68F4C',
     YELLOW = '#735751'
 }
+
+export {Color}
