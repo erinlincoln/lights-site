@@ -13,10 +13,12 @@ def create_mode(length, mode_json):
     match mode_json["name"]:
         case "off":
             return LEDMode_Solid(length, ["#000000"])
+        
         case "solid":
             if "colors" not in mode_json["data"] or len(mode_json["data"]["colors"]) != 1:
                 return None
             return LEDMode_Solid(length, [mode_json["data"]["colors"][0]])
+       
         case "gradient":
             # TODO let gradient support more than 2 colors
             if "colors" not in mode_json["data"] or len(mode_json["data"]["colors"]) != 2:
@@ -24,10 +26,12 @@ def create_mode(length, mode_json):
             if "center" not in mode_json["data"] or mode_json["data"]["center"] < 0 or mode_json["data"]["center"] > 1:
                 return None
             return LEDMode_Gradient(length, mode_json["data"]["colors"], mode_json["data"]["center"])
+        
         case "multicolor":
             if "colors" not in mode_json["data"] or len(mode_json["data"]["colors"]) > length:
                 return None
             return LEDMode_MultiColor(length, mode_json["data"]["colors"])
+        
         case "runningmulticolor":
             if "colors" not in mode_json["data"]:
                 return None
@@ -44,6 +48,7 @@ def create_mode(length, mode_json):
             if "frequency" not in mode_json["data"]:
                 return None
             return LEDMode_Twinkle(length, mode_json["data"]["colors"], mode_json["data"]["speed"], mode_json["data"]["frequency"])
+        
         case "rainbow":
             if "speed" not in mode_json["data"]:
                 return None
