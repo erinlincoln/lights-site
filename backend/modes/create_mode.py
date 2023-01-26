@@ -1,5 +1,9 @@
 from modes.basic_modes import *
+
+# Import custom modes here
 from modes.twinkle import LEDMode_Twinkle
+from modes.rainbow import LEDMode_Rainbow
+
 
 # Creates a mode from the json received from an API request
 def create_mode(length, mode_json):
@@ -30,6 +34,8 @@ def create_mode(length, mode_json):
             if "speed" not in mode_json["data"]:
                 return None
             return LEDMode_RunningMultiColor(length, mode_json["data"]["colors"], mode_json["data"]["speed"])
+        
+        # Append custom modes here
         case "twinkle":
             if "colors" not in mode_json["data"] or len(mode_json["data"]["colors"]) != 1:
                 return None
@@ -38,7 +44,10 @@ def create_mode(length, mode_json):
             if "frequency" not in mode_json["data"]:
                 return None
             return LEDMode_Twinkle(length, mode_json["data"]["colors"], mode_json["data"]["speed"], mode_json["data"]["frequency"])
-            
+        case "rainbow":
+            if "speed" not in mode_json["data"]:
+                return None
+            return LEDMode_Rainbow(length, mode_json["data"]["speed"])
             
         # TODO implement others
         
