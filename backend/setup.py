@@ -1,10 +1,11 @@
 from strip import Strip
+import socket
 
 # ip addresses
 ip_office =     '192.168.0.19' # V
 ip_hallway =    '192.168.0.16' # IV
 ip_livingroom = '192.168.0.18' # III
-ip_bedroom =    '192.168.0.17' # II
+ip_bedroom =    '192.168.0.13' # II
 # unused:       '192.168.0.15' # I
 
 # map strip to room & zone
@@ -21,5 +22,5 @@ strips['l1'] = Strip(ip_livingroom, 0, 100)
 strips['l2'] = Strip(ip_livingroom, 1, 100)
 strips['l3'] = Strip(ip_livingroom, 2, 100)
 # Bedroom
-#strips['b1'] = Strip(ip_bedroom   , 0, 100)
+strips['b1'] = Strip(ip_bedroom   , 0, 100)
 #strips['b2'] = Strip(ip_bedroom   , 1, 100)

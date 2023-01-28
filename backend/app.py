@@ -124,7 +124,7 @@ def sendData():
                             continue
 
                         # Finally change the mode of the strip
-                        #print("Changing mode of ", strip_json["id"])
+                        print("Changing mode of ", strip_json["id"])
                         strip.changeMode(mode)
 
                 # if still can delete, pop data from queue

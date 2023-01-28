@@ -8,7 +8,7 @@ def hsv_to_rgb(h, s, v):
     c = v*s
     x = c*(1 - abs((h/60) % 2 - 1))
     m = v - c
-    Rp, Gp, Bp = 0
+    Rp, Gp, Bp = (0, 0, 0)
     if h < 60:
         (Rp, Gp, Bp) = (c, x, 0)
     elif h < 120:

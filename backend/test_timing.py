@@ -8,9 +8,12 @@ PRINT_ENABLED = False
 PRINT_ENABLED_NAMES = [
     #"SetLights()",
     #"SendData()",
+    "Testing",
     #"Queue Sem.",
     #"Strip Upd."
 ]
+PRINT_ANOMALIES = True
+ANOMALY_THRESHOLD = 1.1
 
 # A class to test timing in the backend. Probably don't want this in the final code
 class TimingTester:
@@ -27,8 +30,14 @@ class TimingTester:
         return self.start_time
     
     def stop(self):
-        self.sum += time.time() * 1000 - self.start_time
+        delta_t = time.time() * 1000 - self.start_time
+                
+        self.sum += delta_t
         self.num_measurements += 1
+
+        if PRINT_ANOMALIES and self.name in PRINT_ENABLED_NAMES and self.sum != 0 and abs((delta_t - (self.sum / self.num_measurements)) / (self.sum / self.num_measurements)) >= ANOMALY_THRESHOLD:
+            print("TT ", self.name, " : ANOMALY : ", delta_t)
+
 
         if not self.running:
             print("Timing Tester Error: Stop before Start")
