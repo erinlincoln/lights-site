@@ -4,7 +4,6 @@ from modes.basic_modes import *
 from modes.twinkle import LEDMode_Twinkle
 from modes.rainbow import LEDMode_Rainbow
 
-
 # Creates a mode from the json received from an API request
 def create_mode(length, mode_json):
     # Previously, the presence of the 'name' and 'data' properties have been verified

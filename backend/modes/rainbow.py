@@ -1,5 +1,7 @@
 from modes.basic_modes import LEDMode
 
+# THIS FILE IS DEPRECATED AS DEVICES RUN MOST DYNAMIC MODES LOCALLY
+
 # generates rgb color from hsv data
 # h is hue between 0-360 degrees
 # s is saturation betwen 0-1

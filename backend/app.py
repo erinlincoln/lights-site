@@ -3,7 +3,7 @@ from flask_cors import CORS
 from setup import strips
 import threading
 import time
-from modes.create_mode import create_mode
+from mode_data import create_mode_message
 from test_timing import TimingTester
 
 app = Flask(__name__)
@@ -66,13 +66,13 @@ def scheduleData(data):
     d = 1
 
 
+# TODO Change json handling to queue strip requests individually
 def sendData():
     global queue, queue_sem, strips
 
     # Debugging timing
     tt_sendData = TimingTester("SendData()")
     tt_queueSem = TimingTester("Queue Sem.")
-    tt_stripUpd = TimingTester("Strip Upd.")
 
     # Infinite loop over queue
     while True:
@@ -114,18 +114,20 @@ def sendData():
                             continue
                         if "data" not in strip_json["mode"]:
                             print("Invalid JSON received: No data in mode. Skipping strip.")
+                            continue
 
                         # parse strip
                         strip = strips[strip_json["id"]]
-                        mode = create_mode(strip.length, strip_json["mode"])
+                        message = create_mode_message(strip.index, strip_json["mode"])
 
-                        if mode is None:
+                        if message is None:
                             print("Failed to parse mode JSON. Skipping strip.")
                             continue
 
                         # Finally change the mode of the strip
                         print("Changing mode of ", strip_json["id"])
-                        strip.changeMode(mode)
+                        strip.setData(message)
+                        canDelete = canDelete and strip.send()
 
                 # if still can delete, pop data from queue
                 if canDelete:
@@ -140,17 +142,6 @@ def sendData():
 
         tt_queueSem.stop()
         tt_queueSem.print()
-
-        # Update all strips
-        tt_stripUpd.start()
-
-        t = time.time() * 1000
-        for strip in strips.values():
-            strip.update(t)
-
-        tt_stripUpd.stop()
-        tt_stripUpd.print()
-        
 
         # Wait until next loop
         time.sleep(DELAY)

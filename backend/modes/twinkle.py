@@ -1,6 +1,8 @@
 from modes.basic_modes import LEDMode
 from random import randint, normalvariate
 
+# THIS FILE IS DEPRECATED AS DEVICES RUN MOST DYNAMIC MODES LOCALLY
+
 class Twinkle:
     def __init__(self, lifespan, power):
         self.lifespan = lifespan    # time (in ms) that the twinkle will last

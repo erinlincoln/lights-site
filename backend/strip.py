@@ -1,8 +1,10 @@
 import socket
-from modes.basic_modes import get_default_mode
+from mode_data import create_mode_message
 from threading import Semaphore
 from test_timing import TimingTester
+from constants import *
 import time
+import struct
 
 PORT = 1234  # The port used by the server
 STRIP_LEN = 100 # LEDS on a strip
@@ -17,64 +19,22 @@ class Strip:
         self.index = index
         self.length = length
         self.most_recent_timestamp = -1
-        self.mode = get_default_mode(self.length)
+        self.mode = TASK_UNUSED
+        self.data = None
+        self.lastresponse = None
         self.host = host
         self.semaphore = Semaphore() # Semaphore used to protect self.mode
         # Right now this semaphore essentially does nothing
-        
-    @property
-    def data(self):
-        return self.mode.data
 
     # tell mode to update
-    def update(self, t):
-        
-        self.semaphore.acquire()
-        # CRITICAL SECTION
-
-        # tell mode to update and get var back whether to send new data
-        
-        send = self.mode.progress(t)
-
-        result = True
-
-        # if strip data is updated, send new data
-        if send:
-            tt_testing.start()
-            result = self.send()
-            tt_testing.stop()
-            tt_testing.print()
-
-        # END CRITICAL SECTION
-        self.semaphore.release()
-
-        return result
-
-    # sets new mode of strip
-    def changeMode(self, mode):
-        
-        self.semaphore.acquire()
-        # CRITICAL SECTION
-
-        # set new previous mode
-        self.prevMode = self.mode
-
-        # set new mode
-        self.mode = mode
-
-        # END CRITICAL SECTIOn
-        self.semaphore.release()
+    def setData(self, data):
+        self.data = data
+        self.data_msg_id = struct.unpack('>I', data[0:4])
 
     # Sends the data to the pico
     # CALL THIS FROM A CRITICAL SECTION ONLY!
     def send( self ):
         global sockets
-
-        # Append index to front of data
-        data_final = ['0'+ str(self.index) ]
-        for color in self.data:
-            data_final.append(color[1:])
-        data_final = bytearray.fromhex("".join(data_final))
 
         print('about to send')
         print(self.host)
@@ -84,44 +44,39 @@ class Strip:
             sockets[self.host].connect(( self.host, PORT ))
         self.socket = sockets[self.host]
 
-        result = False
-
         try:
             #print('trying to send')
             self.socket.settimeout(2)
-            self.socket.sendall( data_final )
+            self.socket.sendall( self.data )
         except (ConnectionResetError, ConnectionAbortedError, ConnectionError) as e:
             # Attempt reconnection
             print('socket error, attempting reconnection:', e)
             self.socket.connect(( self.host, PORT ))
             return False
 
+        res_last_message_id = 0
+        res_old_task_id = 0
+        res_length = 0
+        res_success = False
         try:
-            # Check for 'Success'
-            result = str(self.socket.recv(7))[2:-1]
+            # Receive and parsemessage response
+            res_header = str(self.socket.recv(8))[2:-1]
+            res_last_message_id = struct.unpack('>I', res_header[0:4])
+            res_old_task_id = struct.unpack('>B', res_header[4])
+            res_length = struct.unpack('>H', res_header[5:7])
+            res_success = struct.unpack('>?', res_header[7])
+            res_body = str(self.socket.recv(res_length - 8))
+
         except Exception as e:
             print('error on reading', e)
-            print('length of data being sent:', len(data_final))
+            print('length of data being sent:', len(self.data))
+            print('length of data being received:', res_length)
             return False
-
-
-        if result == 'Success':
+        
+        if res_success and self.data_msg_id == res_last_message_id:
             print('message success')
             return True
 
+        # TODO other parsing, error checking, and correction here
+
         return False
-
-    def bitArr( self ):
-        # indicate strip to write to
-        colorArr = ['0'+ str(self.index) ]
-
-        # add list of colors
-        while len(colorArr) < (STRIP_LEN + 2):
-            for color in self.data:
-                colorArr.append(color[ 1 : ])
-
-        # make into a string
-        colorString = "".join(colorArr)
-
-        # return bytearray of colors
-        return bytearray.fromhex(colorString)

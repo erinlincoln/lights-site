@@ -1,0 +1,182 @@
+Backend -> Device Comms Standard
+
+All messages must now begin with a task ID, followed by data length, followed by data
+
+--------------------------------------------------------
+| 0-3 Msg ID | 4 Task ID | 5-6 len | 7-len data        |
+--------------------------------------------------------
+The maximum length is 7 + 303.
+
+The device will always respond with the following message:
+
+---------------------------------------------------------------------------
+| 0-3 Msg ID | 4 Old Task ID | 5-6 len | 7 Succ/Fail | 8-len data         |
+---------------------------------------------------------------------------
+
+All values are bg endian.
+
+~~~~~~~~~~~~~~~~~~~~~ Task IDs: ~~~~~~~~~~~~~~~~~~~~~
+
+# System testing commands
+0x00    UNUSED                          Unused.
+0x01    PING                            Used to test connection to device.
+0x02    GET_ERROR                       Gets the error state of the device.
+0x03    GET_LAST_MSG                    Gets the last command received by the device.
+
+# LED Mode commands
+0x10    RAW_LED_COMMAND                 Writes raw LED colors to the strip.
+0x11    MODE_SOLID                      Writes a single solid color to the strip.
+0x12    MODE_GRADIENT                   Creates a gradient of (two) colors
+0x13    MODE_MULTICOLOR                 Repeats a pattern of colors on a strip.
+0x14    MODE_RUNNING_MULTICOLOR         Moves a pattern of colors down (or up) the strip.
+0x15    MODE_TWINKLE                    Displays a twinkling pattern
+0x16    MODE_RAINBOW                    Displays a rainbow pattern
+# Add more modes here
+
+
+~~~~~~~~~~~~~~~~~~~~~ System testing command descriptions: ~~~~~~~~~~~~~~~~~~~~~
+
+-- UNUSED --
+
+Length: Any
+
+Data fields: Any
+
+Description:
+Unused task ID. Causes the device to enter an error state.
+
+Response fields: None
+
+-- PING --
+
+Length: 6
+
+Data fields: None
+
+Description:
+Does nothing to the device, other than requests the standard message recieved packet.
+
+Response fields: None
+
+-- GET ERROR --
+
+Length: 7
+
+Data fields: None
+
+Description:
+Does nothing to the device, other than requests the current error state / message.
+
+Response fields:
+- 8 Error code: a byte representing the error state of the device
+- 9-len Error msg: a c-string error message for debug purposes
+
+-- GET LAST MESSAGE --
+
+Length: 7
+
+Data fields: None
+
+Description:
+Gets the last message received by the device.
+
+Response fields:
+- 8-len Prev cmd: the exact message (msg ID and all) that was received, not including any GET_LAST_MESSAGEs.
+
+
+~~~~~~~~~~~~~~~~~~~~~ LED Mode command descriptions: ~~~~~~~~~~~~~~~~~~~~~
+
+-- RAW_LED_COMMAND --
+
+Length: 7 + 301
+
+Data fields:
+- 0 Strip index: the index of the strip to write to
+- 1-301 data: The color data, RGB, one byte at a time, one pixel at a time (as in v2)
+
+Description:
+Writes raw color data straight to a LED strip. Used to ensure compatibility with previous backends, or other versions.
+
+Response fields: None
+
+-- MODE_SOLID --
+
+Length: 7 + 4
+
+Data fields:
+- 0 Strip index: the index of the strip to write to
+- 1-3 Color data: the color to write
+
+Description:
+Writes a single color to every pixel on a strip.
+
+Response fields: None
+
+-- MODE_GRADIENT --
+
+Length: 7 + 9
+
+Data fields:
+- 0 Strip index: the index of the strip to write to
+- 1 Center: uint8 the center of the gradient
+- 2-4 Color 1: the first color
+- 5-7 Color 2: the second color
+
+Description:
+Writes a gradient of two colors, centered at a pixel, to a strip.
+
+Response fields: None
+
+-- MODE_MULTICOLOR --
+
+Length: Any
+
+Data fields:
+- 0 Strip index: the index of the strip to write to
+- 1-len Color data: Color data which will repeat over and over on a strip
+
+Description:
+Writes a repeating pattern of colors to a strip.
+
+Response fields: None
+
+-- MODE_RUNNING_MULTICOLOR --
+
+Length: Any
+
+Data fields:
+- 0 Strip index: the index of the strip to write to
+- 1-2 Speed: A signed int representing speed
+- 3-len Color data: Color data which will repeat over and over on a strip, moving at speed
+
+Description:
+Writes a repeating pattern of colors to a strip that moves down the strip. Negative speeds move up.
+
+Response fields: None
+
+-- MODE_TWINKLE --
+
+Length: 7 + 5
+
+Data fields:
+- 0 Strip index: the index of the strip to write to
+- 1-2 Speed: A signed int representing speed: the "lifespan" of a twinkle
+- 3-4 Frequency: A signed int representing frequency: the number of twinkles
+
+Description:
+Writes a twinkling pattern to a led strip.
+
+Response fields: None
+
+-- MODE_RAINBOW --
+
+Length: 7 + 3
+
+Data fields:
+- 0 Strip index: the index of the strip to write to
+- 1-2 Speed: A signed int representing speed
+
+Description:
+Writes a rainbow that moves down (or up) the strip at speed
+
+Response fields: None
