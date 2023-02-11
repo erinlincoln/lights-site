@@ -1,5 +1,5 @@
 import React from 'react'
-import '../newStyle/card.css';
+import '../../newStyle/card.css';
 
 export default function Card({text, onClick} : { text: String, onClick: Function}) {
   return (

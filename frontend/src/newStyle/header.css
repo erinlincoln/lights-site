@@ -1,0 +1,15 @@
+header {
+    position: relative;
+    z-index: 1;
+    height: 8vh;
+    box-shadow: 0 5px #782020;
+    border-radius: 3px;
+    background-color: white;
+}
+
+#header-title {
+    /* font-family: 'Montserrat', sans-serif; */
+    font-weight: 500;
+    letter-spacing: 0.3rem;
+    color: #782020;
+}

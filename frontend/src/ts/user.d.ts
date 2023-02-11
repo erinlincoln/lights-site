@@ -1,5 +1,13 @@
-interface User {
-    name: String
+import { ReqBody } from "./request";
+
+interface Preset {
+    name: string,
+    body: ReqBody
 }
 
-export type {User};
+interface User {
+    name: String,
+    presets: Preset[]
+}
+
+export type {User, Preset};

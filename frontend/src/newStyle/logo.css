@@ -1,3 +1,7 @@
+.xsmall {
+    max-height: 8vh;
+}
+
 .small {
     max-height: 10vh;
 }

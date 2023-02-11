@@ -1,12 +1,12 @@
 // import logo from './logo.svg';
 // import logo from './images/apollo-2.png'
-import React, { useEffect, useReducer, useState } from 'react';
+import React, { useReducer, useState } from 'react';
 // import LightsDisp from './components/Main';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Login from './newComponents/Login';
 import Lights from './newComponents/Lights';
-import { LightsContext, MyLightsContext } from './context';
+import { LightsContext, MyLightsContext } from './contexts/lightsContext';
 import { ReqBody } from './ts/request';
 import { BodyAction } from './ts/bodyAction';
 import { User } from './ts/user';
@@ -24,13 +24,9 @@ const bodyReducer = (state: ReqBody, action: BodyAction) => {
 }
 
 function App() {
-  const [user, setUser] : [user: User, setUser: Function] = useState({name: ''});
+  const [user, setUser] : [user: User, setUser: Function] = useState({name: '', presets: []});
   const [body, updateBody] = useReducer(bodyReducer, {strips: []});
   const value: LightsContext = { user, setUser, body, updateBody}
-
-  useEffect(() => {
-    console.log(user)
-  }, [user])
 
   return (
     <div className='app'>

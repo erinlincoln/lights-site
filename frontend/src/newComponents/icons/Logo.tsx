@@ -1,5 +1,5 @@
 import React from 'react';
-import '../newStyle/logo.css';
+import '../../newStyle/logo.css';
 
 export default function Logo({color = '#782020', size = 'small'}) {
 

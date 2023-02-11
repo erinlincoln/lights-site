@@ -1,0 +1,12 @@
+.body-component {
+    margin-left: calc(20vw + 1rem + 5px);
+    padding: 2rem;
+    height: 92vh;
+    transition: ease-in-out 1s;
+}
+
+@media screen and (max-width: 800px) {
+    .body-component {
+      margin-left: 1rem;
+    }
+  }

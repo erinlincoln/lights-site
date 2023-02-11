@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
-import { ReqBody } from "./ts/request";
-import { User } from "./ts/user";
+import { ReqBody } from "../ts/request";
+import { User } from "../ts/user";
 
 export interface LightsContext {
     user: User,
@@ -10,7 +10,7 @@ export interface LightsContext {
 }
 
 export const MyLightsContext = createContext<LightsContext>({
-    user: {name: ''},
+    user: {name: '', presets: []},
     setUser: () => {},
     body: { strips: [] },
     updateBody: () => {}

@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import { useLightsContext } from '../context'
-import Card from './Card'
+import { useLightsContext } from '../contexts/lightsContext'
+import Card from './common/Card'
 import '../newStyle/login.css';
-import Logo from './Logo';
+import Logo from './icons/Logo';
 
 export default function Login() {
   const { setUser } = useLightsContext();
