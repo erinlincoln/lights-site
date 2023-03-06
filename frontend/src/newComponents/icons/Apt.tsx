@@ -57,7 +57,7 @@ export default function Apt(props:
             <Couch color={couch} hoverColor={couchHover} isCouchHover={isCouchHover} handleMouseEnter={couchHandleMouseEnter} handleMouseLeave={couchHandleMouseLeave} handleClick={() => handleClick('livingroom')}/>
             <Laptop color={laptop} hoverColor={laptopHover} isLaptopHover={isLaptopHover} handleMouseEnter={laptopHandleMouseEnter} handleMouseLeave={laptopHandleMouseLeave} handleClick={() => handleClick('office')}/>
             <Door color={door} hoverColor={doorHover} isDoorHover={isDoorHover} handleMouseEnter={doorHandleMouseEnter} handleMouseLeave={doorHandleMouseLeave} handleClick={() => handleClick('hallway')}/>
-            <svg id='apt-icon' width="800" height="600" viewBox='0 0 800 600' xmlns="http://www.w3.org/2000/svg">
+            <svg id='apt-icon' width="580" height="550" viewBox='70 25 640 560' xmlns="http://www.w3.org/2000/svg">
                 <g onClick={() => handleClick('bedroom')} onMouseEnter={bedHandleMouseEnter} onMouseLeave={bedHandleMouseLeave}>
                     <rect stroke={bedroomColor} id="svg_72" height="55.32832" width="47.13156" y="490.99041" x="191.39855" stroke-width="5" fill={bedroomColor}/>
                     <rect stroke={bedroomColor} id="svg_71" height="79.5089" width="172.54248" y="493.44946" x="235.25138" stroke-width="5" fill={bedroomColor}/>

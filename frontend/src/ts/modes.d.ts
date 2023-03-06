@@ -1,11 +1,12 @@
 export enum ModeType {
-    SINGLE = 'single color',
-    MULTI = 'multiple colors',
+    SINGLE = 'single',
+    MULTI = 'multiple',
     GRADIENT = 'gradient'
 }
 
 export interface Mode {
     name: string,
     type: ModeType,
-    description: string
+    description: string,
+    data?: any
 }

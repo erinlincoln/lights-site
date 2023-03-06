@@ -7,7 +7,7 @@
     height: 23%;
     position: absolute;
     top: 63%;
-    left: 64%;
+    left: 71%;
 }
 
 #bed-icon {
@@ -15,7 +15,7 @@
     height: 15%;
     position: absolute;
     top: 62%;
-    left: 16%;
+    left: 12%;
 }
 
 #couch-icon {
@@ -30,8 +30,14 @@
     width: 12%;
     height: 12%;
     position: absolute;
-    top: 13%;
-    left: 75.75%;
+    top: 9%;
+    left: 84%;
+}
+
+@media screen and (max-width: 500px) {
+    #door-icon {
+        top: 11%;
+    }
 }
 
 #apt-icon {
@@ -43,7 +49,6 @@
 
 #apt-container {
     background-color: white;
-    padding-top: 2rem;
-    padding-bottom: 2rem;
+    padding: 0.5rem;
     border-radius: 5px;
 }

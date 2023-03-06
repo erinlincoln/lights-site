@@ -1,9 +1,9 @@
 import React, {useEffect, useState, useContext, createContext} from 'react';
-import ColorSlider from './selectors/ColorSlider';
-import SingleColor from './selectors/SingleColor';
+import ColorSlider from '../newComponents/colorSelect/selectors/GradientSelector';
+import SingleColor from '../newComponents/colorSelect/selectors/SingleColor';
 import { StateContext } from './Main';
 import '../style/colorSelect.css';
-import OffToggle from './selectors/OffToggle';
+import OffToggle from '../newComponents/colorSelect/selectors/OffToggle';
 import ChoicesDisp from './ChoicesDisp';
 
 export const ColorContext = createContext();

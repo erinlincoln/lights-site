@@ -45,3 +45,8 @@
     font-family: 'Montserrat', sans-serif;
     font-weight: 500;
 }
+@media screen and (max-width: 500px) {
+    #message-container > h1 {
+        font-size: 1.8rem;
+    }    
+}

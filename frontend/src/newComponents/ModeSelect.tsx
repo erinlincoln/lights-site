@@ -1,18 +1,44 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import '../newStyle/modeSelect.css'
 import modes from '../data/modes';
+import { Mode } from '../ts/modes';
+import { useSequenceContext } from '../contexts/sequenceContext';
+import { lightsSequence } from '../ts/lightsSequence.enums';
+import SelectionFooter from './common/SelectionFooter';
 
 export default function ModeSelect() {
+    const {setStage, setMode} = useSequenceContext();
+    const [searchTerm, setSearch] = useState('');
+    const [searchModes, setSearchModes] = useState<Mode[]>(modes);
+    const [searchType, setSearchType] = useState({single: false, multiple: false, gradient: false});
+
+    // filter modes on search term or type change
+    useEffect(()=>{
+        let filteredModes = modes;
+
+        // filter by search term
+        if (searchTerm) {
+            filteredModes = filteredModes.filter((mode) => mode.name.toLowerCase().includes(searchTerm.toLowerCase()));
+        }
+
+        // filter by search types selected
+        if (Object.values(searchType).filter( i => i).length > 0) {
+            filteredModes = filteredModes.filter((mode) => searchType[mode.type])
+        }
+
+        setSearchModes(filteredModes);
+    }, [searchTerm, searchType])
+
   return (
     <div className='body-component' id='mode-select'>
         <div id='search-container'>
-            <form className='d-flex' role="search">
-                <input className="form-control me-2" type="search" placeholder="Start typing a mode name..." aria-label="Search"/>
+            <form className='d-flex' role="search" onChange={(e: any) => setSearch(e.target.value)}>
+                <input name='search' className="form-control me-2" type="search" placeholder="Start typing a mode name..." aria-label="Search"/>
             </form>
             <div id='filters'>
-                <button type="button" className='btn filter-btn'>single</button>
-                <button type="button" className='btn filter-btn'>multiple</button>
-                <button type="button" className='btn filter-btn'>gradient</button>
+                <button type="button" className={`btn ${searchType.single ? 'filter-btn-selected' : 'filter-btn'}`} onClick={() => setSearchType({...searchType, single: !searchType.single})}>single</button>
+                <button type="button" className={`btn ${searchType.multiple ? 'filter-btn-selected' : 'filter-btn'}`} onClick={() => setSearchType({...searchType, multiple: !searchType.multiple})}>multiple</button>
+                <button type="button" className={`btn ${searchType.gradient ? 'filter-btn-selected' : 'filter-btn'}`} onClick={() => setSearchType({...searchType, gradient: !searchType.gradient})}>gradient</button>
             </div>
             <div id='result-disp'>
                 <table className='table'>
@@ -25,8 +51,8 @@ export default function ModeSelect() {
                     </thead>
                     <tbody className='table-group-divider'>
                         {
-                            modes.map((mode) => {
-                                return <tr>
+                            searchModes.map((mode) => {
+                                return <tr onClick={() => { setMode(mode); setStage(lightsSequence.COLORSELECT)}}>
                                     <td className='fw-bold'>{mode.name}</td>
                                     <td className='fst-italic'>{mode.type}</td>
                                     <td>{mode.description}</td>
@@ -35,27 +61,9 @@ export default function ModeSelect() {
                         }
                     </tbody>
                 </table>
-                <nav aria-label="Page navigation example">
-                    <ul className="pagination justify-content-center">
-                        <li className="page-item">
-                            <a className="page-link" href="#" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </a>
-                        </li>
-                        <li className="page-item"><a className="page-link" href="#">1</a></li>
-                        <li className="page-item"><a className="page-link" href="#">2</a></li>
-                        <li className="page-item"><a className="page-link" href="#">3</a></li>
-                        <li className="page-item">
-                            <a className="page-link" href="#" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
             </div>
-            
         </div>
-        
+        <SelectionFooter />
     </div>
   )
 }

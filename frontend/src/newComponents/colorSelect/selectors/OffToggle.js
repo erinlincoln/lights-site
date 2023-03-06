@@ -1,8 +1,8 @@
 import React, { useContext, useEffect } from 'react';
 import Toggle from 'react-toggle';
 import '../../style/toggle.css';
-import { ColorContext } from '../ColorSelect';
-import { StateContext } from '../Main';
+import { ColorContext } from '../../../components/ColorSelect';
+import { StateContext } from '../../../components/Main';
 
 export default function OffToggle() {
 

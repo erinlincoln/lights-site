@@ -1,0 +1,47 @@
+#color-select {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 7px;
+}
+
+.header-txt:hover {
+    color: #782020;
+}
+
+#color-header {
+    border-bottom: 2px solid #782020;
+}
+
+#color-header > h1 {
+    letter-spacing: 5px;
+}
+
+#update-btn {
+    background-color: #207855;
+    color: white;
+    border: none;
+    font-weight: 600;
+}
+
+#update-btn:hover {
+    background-color: #134833;
+    color: white;
+}
+
+.form-switch .form-check-input:focus {
+    border-color: #902828;
+    outline: 0;
+    box-shadow: none;
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='%23902828'/></svg>");
+}
+
+.form-switch .form-check-input:checked {
+    background-color: #782020;
+    border-color: #902828;
+    border: none;
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='-4 -4 8 8'%3e%3ccircle r='3' fill='rgba(255,255,255,1.0)'/></svg>");
+}
+
+.form-check-label, #update-btn {
+    font-family: 'Montserrat', sans-serif;
+}

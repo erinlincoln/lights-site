@@ -7,8 +7,10 @@ export interface SequenceContext {
     setStage: Function,
     room: string,
     setRoom: Function,
-    mode: Mode
-    setMode: Function
+    mode: Mode,
+    setMode: Function,
+    body: any,
+    setBody: Function
 }
 
 export const MySequenceContext = createContext<SequenceContext>({
@@ -17,6 +19,8 @@ export const MySequenceContext = createContext<SequenceContext>({
     room: '',
     setRoom: () => {},
     mode: {name: '', type: ModeType.SINGLE, description: ''},
-    setMode: () => {}});
+    setMode: () => {},
+    body: {},
+    setBody: () => {}});
 
 export const useSequenceContext = () => useContext(MySequenceContext);

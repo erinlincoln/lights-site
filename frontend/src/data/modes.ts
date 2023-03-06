@@ -14,7 +14,10 @@ const modes: Mode[] = [
     {
         name: 'Sunlight',
         type: ModeType.GRADIENT,
-        description: 'Choose from a set of natural-hued light colors mimicking sunlight'
+        description: 'Choose from a set of natural-hued light colors mimicking sunlight',
+        data: {
+            colors: ['#ffddd2', '#ff5b27']
+        }
     }
 ]
 
