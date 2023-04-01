@@ -1,12 +1,16 @@
 export enum ModeType {
-    SINGLE = 'single',
-    MULTI = 'multiple',
-    GRADIENT = 'gradient'
+    SOLID = 'solid',
+    MULTI = 'multicolor',
+    GRADIENT = 'gradient',
+    OFF = 'off',
+    RUNMULTI = 'runningmulticolor',
+    TWINKLE = 'twinkle',
+    RAINBOW = 'rainbow'
 }
 
 export interface Mode {
-    name: string,
-    type: ModeType,
+    type: string,
+    name: ModeType,
     description: string,
     data?: any
 }

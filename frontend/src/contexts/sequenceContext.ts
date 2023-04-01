@@ -5,7 +5,7 @@ import { Mode, ModeType } from "../ts/modes.d";
 export interface SequenceContext {
     stage: lightsSequence,
     setStage: Function,
-    room: string,
+    room: 'livingroom' | 'hallway' | 'office' | 'bedroom',
     setRoom: Function,
     mode: Mode,
     setMode: Function,
@@ -16,9 +16,9 @@ export interface SequenceContext {
 export const MySequenceContext = createContext<SequenceContext>({
     stage: lightsSequence.DASHBOARD, 
     setStage: () => {},
-    room: '',
+    room: 'livingroom',
     setRoom: () => {},
-    mode: {name: '', type: ModeType.SINGLE, description: ''},
+    mode: {type: '', name: ModeType.SOLID, description: ''},
     setMode: () => {},
     body: {},
     setBody: () => {}});

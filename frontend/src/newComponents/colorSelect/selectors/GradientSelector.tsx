@@ -10,7 +10,7 @@ export default function ColorSlider() {
 
   // setup vars
 
-  const {mode} = useSequenceContext();
+  const {mode, setBody} = useSequenceContext();
   const colors = mode.data.colors;
   const [ color, setColor ] = useState(colors[0]);
   const [pureColor, setPureColor] = useState(colors[0])
@@ -19,6 +19,10 @@ export default function ColorSlider() {
   const rainbow = new Rainbow();
   rainbow.setNumberRange(0,100);
   rainbow.setSpectrum( ...colors );
+
+  useEffect(() => {
+    setBody({'colors': [color]});
+  }, [color])
   
   useEffect(() => {
     //update gradient

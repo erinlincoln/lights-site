@@ -1,10 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useSequenceContext } from '../../../contexts/sequenceContext';
 import ColorSelector from './ColorSelector';
 import '../../../newStyle/multipleColors.css';
 
 export default function MultipleColors() {
-    const [colorArr, updateColorArr] = useState<string[]>(['#000000', '#000000', '#000000']);
+    const [colorArr, updateColorArr] = useState<string[]>(['', '', '']);
+    const {setBody} = useSequenceContext();
+    
 
+    useEffect(() => {
+        if (colorArr.filter(color => !color).length === 0) {
+            setBody({'colors': colorArr});
+        }
+      }, [colorArr])
 
   return (
       <div className='accordion'>
@@ -18,7 +26,7 @@ export default function MultipleColors() {
                         
                         <div id={`accordion-collapse-${i}`} className='accordion-collapse collapse mult-dropdown-menu' aria-labelledby={`accordion-heading-${i}`}>
                             <div className='accordion-body'>
-                                <ColorSelector color={color} setColor={(newColor : string) => updateColorArr(() => { const clone = colorArr.slice(); clone.splice(i, 1, newColor); return clone; })} />
+                                <ColorSelector color={color ? color : '#000000'} setColor={(newColor : string) => updateColorArr(() => { const clone = colorArr.slice(); clone.splice(i, 1, newColor); return clone; })} />
                             </div>
                         </div>
                     </div>

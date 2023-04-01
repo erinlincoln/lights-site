@@ -10,7 +10,7 @@ export default function ModeSelect() {
     const {setStage, setMode} = useSequenceContext();
     const [searchTerm, setSearch] = useState('');
     const [searchModes, setSearchModes] = useState<Mode[]>(modes);
-    const [searchType, setSearchType] = useState({single: false, multiple: false, gradient: false});
+    const [searchType, setSearchType] = useState({solid: false, multicolor: false, gradient: false, off: false, runningmulticolor: false, twinkle: false, rainbow: false });
 
     // filter modes on search term or type change
     useEffect(()=>{
@@ -18,12 +18,12 @@ export default function ModeSelect() {
 
         // filter by search term
         if (searchTerm) {
-            filteredModes = filteredModes.filter((mode) => mode.name.toLowerCase().includes(searchTerm.toLowerCase()));
+            filteredModes = filteredModes.filter((mode) => mode.type.toLowerCase().includes(searchTerm.toLowerCase()));
         }
 
         // filter by search types selected
         if (Object.values(searchType).filter( i => i).length > 0) {
-            filteredModes = filteredModes.filter((mode) => searchType[mode.type])
+            filteredModes = filteredModes.filter((mode : Mode) => searchType[mode.name])
         }
 
         setSearchModes(filteredModes);
@@ -36,9 +36,12 @@ export default function ModeSelect() {
                 <input name='search' className="form-control me-2" type="search" placeholder="Start typing a mode name..." aria-label="Search"/>
             </form>
             <div id='filters'>
-                <button type="button" className={`btn ${searchType.single ? 'filter-btn-selected' : 'filter-btn'}`} onClick={() => setSearchType({...searchType, single: !searchType.single})}>single</button>
-                <button type="button" className={`btn ${searchType.multiple ? 'filter-btn-selected' : 'filter-btn'}`} onClick={() => setSearchType({...searchType, multiple: !searchType.multiple})}>multiple</button>
+                <button type="button" className={`btn ${searchType.solid ? 'filter-btn-selected' : 'filter-btn'}`} onClick={() => setSearchType({...searchType, solid: !searchType.solid})}>solid</button>
+                <button type="button" className={`btn ${searchType.multicolor ? 'filter-btn-selected' : 'filter-btn'}`} onClick={() => setSearchType({...searchType, multicolor: !searchType.multicolor})}>multicolor</button>
                 <button type="button" className={`btn ${searchType.gradient ? 'filter-btn-selected' : 'filter-btn'}`} onClick={() => setSearchType({...searchType, gradient: !searchType.gradient})}>gradient</button>
+                <button type="button" className={`btn ${searchType.runningmulticolor ? 'filter-btn-selected' : 'filter-btn'}`} onClick={() => setSearchType({...searchType, runningmulticolor: !searchType.runningmulticolor})}>running multicolor</button>
+                <button type="button" className={`btn ${searchType.twinkle ? 'filter-btn-selected' : 'filter-btn'}`} onClick={() => setSearchType({...searchType, twinkle: !searchType.twinkle})}>twinkle</button>
+                <button type="button" className={`btn ${searchType.rainbow ? 'filter-btn-selected' : 'filter-btn'}`} onClick={() => setSearchType({...searchType, rainbow: !searchType.rainbow})}>rainbow</button>
             </div>
             <div id='result-disp'>
                 <table className='table'>
@@ -53,8 +56,8 @@ export default function ModeSelect() {
                         {
                             searchModes.map((mode) => {
                                 return <tr onClick={() => { setMode(mode); setStage(lightsSequence.COLORSELECT)}}>
-                                    <td className='fw-bold'>{mode.name}</td>
-                                    <td className='fst-italic'>{mode.type}</td>
+                                    <td className='fw-bold'>{mode.type}</td>
+                                    <td className='fst-italic'>{mode.name}</td>
                                     <td>{mode.description}</td>
                                 </tr>
                             })

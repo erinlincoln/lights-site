@@ -11,8 +11,8 @@ import ColorSelect from './colorSelect/ColorSelect';
 
 export default function Lights() {
   const [stage, setStage] = useState(lightsSequence.DASHBOARD);
-  const [room, setRoom] = useState('');
-  const [mode, setMode] = useState({name: '', type: ModeType.SINGLE, description: ''});
+  const [room, setRoom] = useState<'livingroom' | 'hallway' | 'office' | 'bedroom'>('livingroom');
+  const [mode, setMode] = useState({type: '', name: ModeType.SOLID, description: ''});
   const [body, setBody] = useState({});
   const value: SequenceContext = {stage, setStage, room, setRoom, mode, setMode, body, setBody};
 
@@ -28,7 +28,7 @@ export default function Lights() {
           stage === lightsSequence.MODESELECT && <ModeSelect />
         }
         {
-          stage == lightsSequence.COLORSELECT && <ColorSelect />
+          stage === lightsSequence.COLORSELECT && <ColorSelect />
         }
       </div>
       

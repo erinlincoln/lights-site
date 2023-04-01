@@ -4,15 +4,10 @@ enum BodyActionKind {
     SETUP = 'setup',
     UPDATE = 'update'
   }
-  
-interface BodyActionPayload {
-    strip: StripId,
-    mode: Mode
-}
 
 interface BodyAction {
     type: BodyActionKind,
-    payload: BodyActionPayload
+    payload: ReqStrip
 }
 
-export type { BodyActionKind, BodyActionPayload, BodyAction };
+export type { BodyActionKind, BodyAction };

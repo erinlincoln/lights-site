@@ -6,6 +6,8 @@ import '../../newStyle/apt.css';
 import Door from './Door';
 import { useSequenceContext } from '../../contexts/sequenceContext';
 import { lightsSequence } from '../../ts/lightsSequence.enums';
+import { RoomStrips } from '../../ts/request.d';
+import { useLightsContext } from '../../contexts/lightsContext';
 
 export default function Apt(props: 
     {lines: string, 
@@ -29,6 +31,7 @@ export default function Apt(props:
     }) {
     const  {lines, hallway, hallwayHover, livingroom, livingroomHover, office, officeHover, bedroom, bedroomHover, none, bed, bedHover, couch, couchHover, laptop, laptopHover, door, doorHover} = props;
     const {setStage, setRoom} = useSequenceContext();
+    const {updateBody} = useLightsContext();
     
     const [isBedHover, setBedHover] = useState(false);
     const [isCouchHover, setCouchHover] = useState(false);
@@ -49,7 +52,13 @@ export default function Apt(props:
     const laptopHandleMouseEnter = () => setLaptopHover(true);
     const laptopHandleMouseLeave = () => setLaptopHover(false);
 
-    const handleClick = (room: any) => {setRoom(room); setStage(lightsSequence.MODESELECT)}
+    const handleClick = (room: 'office' | 'livingroom' | 'hallway' | 'bedroom' ) => {
+        setRoom(room); 
+        setStage(lightsSequence.MODESELECT);
+
+        // setup strips for that room
+        RoomStrips[room].forEach( strip =>  updateBody({ type: 'setup', payload: { id: strip, mode: {} } }));
+    }
 
     return (
         <div id='apt-container'>

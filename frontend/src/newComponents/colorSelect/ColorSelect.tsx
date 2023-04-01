@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSequenceContext } from '../../contexts/sequenceContext'
 import SelectionFooter from '../common/SelectionFooter';
 import SingleColor from './selectors/SingleColor';
@@ -6,10 +6,17 @@ import '../../newStyle/colorSelect.css'
 import { lightsSequence } from '../../ts/lightsSequence.enums';
 import MultipleColors from './selectors/MultipleColors';
 import ColorSlider from './selectors/GradientSelector';
+import { useLightsContext } from '../../contexts/lightsContext';
+import { RoomStrips, StripId } from '../../ts/request.d';
 
 export default function ColorSelect() {
-  const {mode, setStage} = useSequenceContext();
+  const {mode, setStage, body, room} = useSequenceContext();
+  const {updateBody} = useLightsContext();
   const [autoUpdate, setAutoUpdate] = useState(true);
+
+  useEffect( () => {
+    RoomStrips[room].forEach( (id : StripId) => updateBody({type: 'update', payload: {id, mode: { name: mode.name, data: body}}}))
+  }, [body])
 
   return (
     <div className='body-component'>
@@ -29,13 +36,13 @@ export default function ColorSelect() {
           
         </div>
         {
-          mode.type === 'single' && <SingleColor update={true}/>
+          mode.name === 'solid' && <SingleColor />
         }
         {
-          mode.type === 'multiple' && <MultipleColors />
+          mode.name === 'multicolor' && <MultipleColors />
         }
         {
-          mode.type === 'gradient' && <ColorSlider />
+          mode.name === 'gradient' && <ColorSlider />
         }
         {
           !autoUpdate &&
