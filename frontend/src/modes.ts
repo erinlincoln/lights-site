@@ -1,20 +1,20 @@
 const modeChoices = {
     off: { 
-        mode: 'single-color',
+        mode: 'single',
         choices: [ { type: 'off' } ]
     },
     sunlight: {
-        mode: 'single-color',
+        mode: 'single',
         choices: [ { type: 'color-slider', colors: ['#FCF9D9', '#D9EEFC'] } ]
     },
     single: {
-        mode: 'single-color',
-        choices: [ { type: 'single-color' } ]
+        mode: 'single',
+        choices: [ { type: 'single' } ]
     },
     // rainbow: [],
     striped: {
-        mode: 'multi-color',
-        choices: [ { type: 'single-color' }, { type: 'single-color' } ]
+        mode: 'multi',
+        choices: [ { type: 'single' }, { type: 'single' } ]
     }
 }
 

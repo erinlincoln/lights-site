@@ -1,0 +1,52 @@
+#message-container {
+    background-color: #a94c2a;
+}
+
+#message-container > h1 {
+    font-weight: 500;
+}
+
+/* #user-container {
+    background-color: #D8A24B;
+} */
+
+#new-profile-btn {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.1rem;
+    color: white;
+    background-color: #512706;
+    border: none;
+}
+
+#new-profile-btn:hover {
+    background-color: #833f0c;
+    color: white;
+}
+
+#signup-submit {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.1rem;
+    background-color: #782020;
+    border: none;
+}
+
+#signup-submit:hover {
+    background-color: #8C1C13;
+}
+
+#signup-container > label {
+    font-family:'Libre Baskerville', sans-serif;
+    color: #782020;
+}
+
+#signup-container > input {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+}
+@media screen and (max-width: 500px) {
+    #message-container > h1 {
+        font-size: 1.8rem;
+    }    
+}

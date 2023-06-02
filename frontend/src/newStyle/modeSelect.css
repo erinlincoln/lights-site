@@ -1,0 +1,45 @@
+#search-container {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 5px;
+}
+
+#result-disp {
+    padding-top: 1rem;
+}
+
+.filter-btn, .filter-btn:hover {
+    color: #782020;
+    border: 1px solid #782020;
+    margin: 5px;
+    --bs-btn-padding-y: 0.15rem;
+}
+
+.filter-btn-selected {
+    color: white;
+    background-color: #782020;
+    border: 1px solid #782020;
+    margin: 5px;
+    --bs-btn-padding-y: 0.15rem;
+}
+
+.filter-btn-selected:hover {
+    color: white;
+    background-color: #782020;
+}
+
+@media (hover: hover) {
+    .filter-btn:hover {
+        color: white;
+        background-color: #782020;
+    }
+}
+
+.filter-btn:first-child {
+    margin-left: 0;
+}
+
+tr:hover td {
+    background: #782020;
+    color: white;
+}

@@ -1,0 +1,64 @@
+.body-component {
+    /* margin-left: calc(20vw + 1rem + 5px); */
+    padding: 2rem;
+    /* height: 92vh; */
+    width: 80vw;
+    transition: ease-in-out 1s;
+    margin-bottom: 2.5vh;
+}
+
+@media screen and (max-width: 800px) {
+    .body-component {
+      margin-left: 1rem;
+    }
+  }
+
+  .footer {
+    background: #782020;
+    color: white;
+    padding: 0.25rem;
+    text-align: center;
+    position: fixed;
+    width: 80vw;
+    left: 20vw;
+    bottom: 0;
+    transition: ease-in-out 1s;
+  }
+  
+  .footer .btn, .footer .btn:hover, .footer .btn:not(:disabled):not(:disabled):active, .footer .btn:target, .footer .btn:focus, .footer .active, .footer .active:focus, .footer .btn:not(:disabled) {
+    background-color: transparent;
+    border: none
+  }
+  
+  .footer button:hover {
+    background-color: transparent;
+  }
+  
+  @media screen and (max-width: 800px) {
+    .footer {
+      left: 0;
+      width: 100vw;
+    }
+  }
+
+  .lights-wrapper {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  @media screen and (max-width: 800px) {
+    .lights-wrapper {
+      display: flex;
+      justify-content: flex-start;
+    }
+    .body-component {
+      flex: 1;
+    }
+  }
+
+  @media screen and (max-width: 500px) {
+    .body-component {
+      margin: 5px;
+      padding: 5px;
+    }
+  }

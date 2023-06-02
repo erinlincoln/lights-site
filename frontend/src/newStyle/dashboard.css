@@ -1,0 +1,64 @@
+.app {
+    background-color: #e5b5a3;
+}
+
+#dashboard {
+    --bs-rows: 6;
+    --bs-columns: 4;
+}
+
+#dashboard-grid {
+    height: 100%;
+}
+
+.dashboard-item {
+    background-color: white;
+    text-align: center;
+}
+
+.dashboard-item:hover {
+    background-color: #D8A24B;
+}
+
+#presets {
+    grid-column: 4;
+    grid-row: 1 / 5;
+}
+
+#living-room, #office, #hallway, #bedroom {
+    grid-column: 1 / 4 ;
+}
+
+#living-room {
+    grid-row: 1;
+}
+
+#office {
+    grid-row: 2;
+}
+
+#hallway {
+    grid-row: 3;
+}
+
+#bedroom {
+    grid-row: 4;
+}
+
+#all-off {
+    grid-row: 5 / 7;
+    grid-column: 1/5;
+}
+
+#apt-container {
+    width: 65vw;
+    margin: auto;
+    position: relative;
+}
+
+@media screen and (max-width: 500px) {
+    #apt-container {
+      margin-top: 1rem;
+      width: 100%;
+    }
+  }

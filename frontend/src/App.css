@@ -1,8 +1,30 @@
+body, #root, .app {
+  min-height: calc(100vh);
+  min-width: calc(100vw);
+}
+
+.component {
+  min-height: calc(100vh);
+  --bs-gutter-x: 0;
+}
+
 .App {
   text-align: center;
 }
 
-.App-logo {
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Libre Baskerville', sans-serif;
+  letter-spacing: 0.1rem;
+}
+
+@media screen and (min-width: 800px) {
+  .mobile-only {
+    display: none !important;
+  }
+}
+
+
+/* .App-logo {
   height: 40vmin;
   pointer-events: none;
 }
@@ -35,4 +57,4 @@
   to {
     transform: rotate(360deg);
   }
-}
+} */
