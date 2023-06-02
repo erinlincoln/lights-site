@@ -1,6 +1,3 @@
-from modes.basic_modes import *
-from modes.twinkle import LEDMode_Twinkle
-
 import time
 
 # Quickly enable/disable timing analysis
@@ -60,21 +57,6 @@ class TimingTester:
 
 # Use this area to test and document function timing results
 #   FUNCTION                    EXEC TIME           DATE        NOTES
-#   LEDMode_Twinkle.progress    0.01 ms             1/25/23     
 
-if __name__ == "__main__":
-    COUNT = 1000
-
-    mode = LEDMode_Twinkle(100, ["#ffffff"], 0.5, 0.5)
-
-    tt = TimingTester()
-    for i in range(COUNT):
-        start = tt.start()
-
-        mode.progress(start)
-
-        end = time.time() * 1000
-        tt.stop()
-
-    print("Average runtime: ", tt.get_result(), " ms")
-    
+#if __name__ == "__main__":
+    # ...

@@ -19,12 +19,9 @@ class Strip:
         self.index = index
         self.length = length
         self.most_recent_timestamp = -1
-        self.mode = TASK_UNUSED
         self.data = None
         self.lastresponse = None
         self.host = host
-        self.semaphore = Semaphore() # Semaphore used to protect self.mode
-        # Right now this semaphore essentially does nothing
 
     # tell mode to update
     def setData(self, data):
