@@ -100,8 +100,8 @@ def genData_RunningMulticolor(strip, mode_json):
 
     return data
 
-# MODE_TWINKLE
-def genData_Twinkle(strip, mode_json):
+# MODE_SHIMMER
+def genData_Shimmer(strip, mode_json):
     # Error checking
     if "colors" not in mode_json["data"] or len(mode_json["data"]["colors"]) != 1:
         return None
@@ -189,9 +189,9 @@ def create_mode_message(strip, mode_json):
         case "runningmulticolor":
             task_id = TASK_MODE_RUNNING_MULTICOLOR
             data = genData_RunningMulticolor(strip, mode_json)
-        case "twinkle":
-            task_id = TASK_MODE_TWINKLE
-            data = genData_Twinkle(strip, mode_json)
+        case "shimmer":
+            task_id = TASK_MODE_SHIMMER
+            data = genData_Shimmer(strip, mode_json)
         case "rainbow":
             task_id = TASK_MODE_RAINBOW
             data = genData_Rainbow(strip, mode_json)

@@ -10,7 +10,7 @@ export default function ModeSelect() {
     const {setStage, setMode} = useSequenceContext();
     const [searchTerm, setSearch] = useState('');
     const [searchModes, setSearchModes] = useState<Mode[]>(modes);
-    const [searchType, setSearchType] = useState({solid: false, multicolor: false, gradient: false, off: false, runningmulticolor: false, twinkle: false, rainbow: false });
+    const [searchType, setSearchType] = useState({solid: false, multicolor: false, gradient: false, off: false, runningmulticolor: false, shimmer: false, rainbow: false });
 
     // filter modes on search term or type change
     useEffect(()=>{
@@ -40,7 +40,7 @@ export default function ModeSelect() {
                 <button type="button" className={`btn ${searchType.multicolor ? 'filter-btn-selected' : 'filter-btn'}`} onClick={() => setSearchType({...searchType, multicolor: !searchType.multicolor})}>multicolor</button>
                 <button type="button" className={`btn ${searchType.gradient ? 'filter-btn-selected' : 'filter-btn'}`} onClick={() => setSearchType({...searchType, gradient: !searchType.gradient})}>gradient</button>
                 <button type="button" className={`btn ${searchType.runningmulticolor ? 'filter-btn-selected' : 'filter-btn'}`} onClick={() => setSearchType({...searchType, runningmulticolor: !searchType.runningmulticolor})}>running multicolor</button>
-                <button type="button" className={`btn ${searchType.twinkle ? 'filter-btn-selected' : 'filter-btn'}`} onClick={() => setSearchType({...searchType, twinkle: !searchType.twinkle})}>twinkle</button>
+                <button type="button" className={`btn ${searchType.shimmer ? 'filter-btn-selected' : 'filter-btn'}`} onClick={() => setSearchType({...searchType, shimmer: !searchType.shimmer})}>shimmer</button>
                 <button type="button" className={`btn ${searchType.rainbow ? 'filter-btn-selected' : 'filter-btn'}`} onClick={() => setSearchType({...searchType, rainbow: !searchType.rainbow})}>rainbow</button>
             </div>
             <div id='result-disp'>

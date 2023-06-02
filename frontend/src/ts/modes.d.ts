@@ -4,7 +4,7 @@ export enum ModeType {
     GRADIENT = 'gradient',
     OFF = 'off',
     RUNMULTI = 'runningmulticolor',
-    TWINKLE = 'twinkle',
+    SHIMMER = 'shimmer',
     RAINBOW = 'rainbow'
 }
 

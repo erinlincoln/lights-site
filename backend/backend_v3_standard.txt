@@ -38,7 +38,7 @@ In addition, the device has the ability to request timestamps from the backend, 
 0x12    MODE_GRADIENT                   Creates a gradient of (two) colors
 0x13    MODE_MULTICOLOR                 Repeats a pattern of colors on a strip.
 0x14    MODE_RUNNING_MULTICOLOR         Moves a pattern of colors down (or up) the strip.
-0x15    MODE_TWINKLE                    Displays a twinkling pattern
+0x15    MODE_SHIMMER                    Displays a shimmering pattern
 0x16    MODE_RAINBOW                    Displays a rainbow pattern
 # Add more modes here
 
@@ -172,17 +172,18 @@ Writes a repeating pattern of colors to a strip that moves down the strip. Negat
 
 Response fields: None
 
--- MODE_TWINKLE --
+-- MODE_SHIMMER --
 
 Length: 7 + 5
 
 Data fields:
 - 0 Strip index: the index of the strip to write to
-- 1-2 Speed: A signed int representing speed: the "lifespan" of a twinkle
-- 3-4 Frequency: A signed int representing frequency: the number of twinkles
+- 1-2 Speed: A signed int representing speed: the "lifespan" of a shimmer
+- 3-4 Frequency: A signed int representing frequency: the number of shimmer
+- 5-7 Color data: Color data which will be used for the shimmer effect
 
 Description:
-Writes a twinkling pattern to a led strip.
+Writes a shimmering pattern to a led strip.
 
 Response fields: None
 

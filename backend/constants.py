@@ -13,7 +13,7 @@ TASK_MODE_SOLID                 = 0x11
 TASK_MODE_GRADIENT              = 0x12
 TASK_MODE_MULTICOLOR            = 0x13
 TASK_MODE_RUNNING_MULTICOLOR    = 0x14
-TASK_MODE_TWINKLE               = 0x15
+TASK_MODE_SHIMMER               = 0x15
 TASK_MODE_RAINBOW               = 0x16
 
 # Maximum message length
