@@ -3,7 +3,7 @@ from flask_cors import CORS
 from setup import strips
 import threading
 import time
-from mode_data import create_mode_message
+from mode_data import create_mode_message, create_ota_message
 from test_timing import TimingTester
 
 app = Flask(__name__)
@@ -80,6 +80,9 @@ def sendData():
         tt_sendData.start()
         tt_queueSem.start()
 
+        # Always send timestamp on startup
+        last_time_sent = time.time() - 500
+
         # Pull in new modes from queue
         if queue_sem.acquire(timeout=0.01):
             # BEGIN CRITICAL SECTION
@@ -95,6 +98,15 @@ def sendData():
                 
                 # var to keep track of whether current data can be deleted from queue
                 canDelete = True
+
+                # Create a system message if necessary
+                if "system" in data:
+                    if "ota" in data["system"] and data["system"]["ota"] in strips.keys():
+                        message = create_ota_message()
+                        strip = strips[data["system"]["ota"]]
+                        print("Sending OTA task to " + data["system"]["ota"])
+                        strip.setData(message)
+                        canDelete = canDelete and strip.send()
 
                 # Update all strips in data
                 if "strips" in data:

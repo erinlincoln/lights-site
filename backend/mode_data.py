@@ -10,12 +10,12 @@ def genData_Off(strip):
     data = bytearray()
     try:
         data.append(strip) # Strip index
-        data.append(bytearray.fromhex("000000")) # Color data
+        data.extend(bytearray.fromhex("000000")) # Color data
     except:
         return None
 
     # Length check
-    if len(data) != 7 + 4:
+    if len(data) != 4:
         return None
     return data
 
@@ -30,12 +30,13 @@ def genData_Solid(strip, mode_json):
     data = bytearray()
     try:
         data.append(strip) # Strip index
-        data.append(bytearray.fromhex("".join(mode_json["data"]["colors"][0][1:]))) # Color data
+        data.extend(bytearray.fromhex("".join(mode_json["data"]["colors"][0][1:]))) # Color data
     except:
         return None
 
     # Length check
-    if len(data) != 7 + 4:
+    if len(data) != 4:
+        print("Bad length check. ", data)
         return None
     return data
 
@@ -52,13 +53,13 @@ def genData_Gradient(strip, mode_json):
     try:
         data.append(strip) # Strip index
         data.append(int(mode_json["data"]["center"] * 255)) # Center
-        data.append(bytearray.fromhex("".join(mode_json["data"]["colors"][0][1:]))) # Color 1
-        data.append(bytearray.fromhex("".join(mode_json["data"]["colors"][1][1:]))) # Color 2
+        data.extend(bytearray.fromhex("".join(mode_json["data"]["colors"][0][1:]))) # Color 1
+        data.extend(bytearray.fromhex("".join(mode_json["data"]["colors"][1][1:]))) # Color 2
     except:
         return None
 
     # Length check
-    if len(data) != 7 + 9:
+    if len(data) != 8:
         return None
     return data
 
@@ -73,7 +74,7 @@ def genData_Multicolor(strip, mode_json):
     try:
         data.append(strip) # Strip index
         for color in mode_json["data"]["colors"]:
-            data.append(bytearray.fromhex("".join(color[1:]))) # Color data
+            data.extend(bytearray.fromhex("".join(color[1:]))) # Color data
     except:
         return None
 
@@ -93,7 +94,7 @@ def genData_RunningMulticolor(strip, mode_json):
         data.append(strip) # Strip index
         data.append(int(mode_json["data"]["speed"] * 32766)) # Speed
         for color in mode_json["data"]["colors"]:
-            data.append(bytearray.fromhex("".join(color[1:]))) # Color data
+            data.extend(bytearray.fromhex("".join(color[1:]))) # Color data
     except:
         return None
 
@@ -119,28 +120,43 @@ def genData_Twinkle(strip, mode_json):
         return None
 
     # Length check
-    if len(data) != 7 + 5:
+    if len(data) != 5:
         return None
     return data
 
 # MODE_RAINBOW
 def genData_Rainbow(strip, mode_json):
+    print("entering rainbow")
     # Error checking
     if "speed" not in mode_json["data"]:
+        print("speed not found")
         return None
 
     # Construct data
     data = bytearray()
     try:
         data.append(strip) # Strip index
-        data.append(int(mode_json["data"]["speed"] * 32766)) # Speed
-    except:
+        #data.append(int(mode_json["data"]["speed"] * 32766)) # Speed
+        data.extend(((int)(mode_json["data"]["speed"] * 32766)).to_bytes(2, 'big')) # Speed
+        
+    except Exception as e:
+        print(e)
         return None
 
     # Length check
-    if len(data) != 7 + 3:
+    if len(data) != 3:
         return None
     return data
+    
+def create_ota_message():
+    message = bytearray()
+    
+        # Message ID: random 4-byte value
+    message.extend(randbytes(4))
+    message.extend(TASK_OTA.to_bytes(1, 'big'))
+    l = (len(message) + 2)
+    message.extend(l.to_bytes(2, 'big'))
+    return message
     
 
 # Creates the mode data string to send to a satellite as specified in backend_v3_standard.txt
@@ -151,7 +167,7 @@ def create_mode_message(strip, mode_json):
     message = bytearray()
 
     # Message ID: random 4-byte value
-    message.append(randbytes(4))
+    message.extend(randbytes(4))
 
     task_id = TASK_UNUSED
     data = None
@@ -180,17 +196,17 @@ def create_mode_message(strip, mode_json):
             task_id = TASK_MODE_RAINBOW
             data = genData_Rainbow(strip, mode_json)
         case _:
-            return None        
+            return None
     
     if data is None:
         return None
     
-    message.append(task_id.to_bytes(1, 'big'))
+    message.extend(task_id.to_bytes(1, 'big'))
 
     l = (len(message) + len(data) + 2)
     if l > MAX_MESSAGE_LENGTH:
         return None
-    message.append(l.to_bytes(2, 'big'))
-    message.append(data)
+    message.extend(l.to_bytes(2, 'big'))
+    message.extend(data)
     return message
 

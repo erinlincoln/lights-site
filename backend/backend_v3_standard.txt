@@ -15,6 +15,12 @@ The device will always respond with the following message:
 
 All values are bg endian.
 
+In addition, the device has the ability to request timestamps from the backend, which will take the format
+
+--------------------------------------------------------
+| 0-3 All zero | 4 0x0 | 5-6 len | 7 0x50 | 8-len data |
+--------------------------------------------------------
+
 ~~~~~~~~~~~~~~~~~~~~~ Task IDs: ~~~~~~~~~~~~~~~~~~~~~
 
 # System testing commands
@@ -22,6 +28,9 @@ All values are bg endian.
 0x01    PING                            Used to test connection to device.
 0x02    GET_ERROR                       Gets the error state of the device.
 0x03    GET_LAST_MSG                    Gets the last command received by the device.
+0x04    SYNC_TIME                       Sends the current time to the device for synchronization.
+0x05    OTA                             Switches the device to OTA mode.
+0x06    GET_ID                          Gets a unique ID
 
 # LED Mode commands
 0x10    RAW_LED_COMMAND                 Writes raw LED colors to the strip.
@@ -83,6 +92,15 @@ Gets the last message received by the device.
 Response fields:
 - 8-len Prev cmd: the exact message (msg ID and all) that was received, not including any GET_LAST_MESSAGEs.
 
+-- OTA --
+
+Length: 7
+Data fields: None
+
+Description:
+Switches the device to OTA mode. See picowota repo for details.
+
+Response fields: None
 
 ~~~~~~~~~~~~~~~~~~~~~ LED Mode command descriptions: ~~~~~~~~~~~~~~~~~~~~~
 
