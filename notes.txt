@@ -31,8 +31,8 @@ For specific modes:
 {
     "mode": "Gradient",             // Displays a gradient centered at a point, fading from one color to another
     "data": {
-        "colors": [color1, color2],        // The color at the center of the gradient
-        "center": float between 0 and 1,        // The color at the edge of the gradient
+        "color1": "#XXXXXX",        // The color at the center of the gradient
+        "color2": "#XXXXXX",        // The color at the edge of the gradient
         "pos": "##",                // The position on the strip, as a percentage (?), the gradient is centered at
         "strength": "##"            // The "strength" of the gradient- how spread out it is, also as a percentage
     }
@@ -41,16 +41,14 @@ For specific modes:
 {
     "mode": "Rainbow",              // Displays a rainbow that changes over time
     "data": {
-        "speed": "##" float between 0 and 1              // The speed of the rainbow changing (TODO figure out what values work here)
+        "speed": "##"               // The speed of the rainbow changing (TODO figure out what values work here)
     }
 }
 
 {
-    "mode": "Twinkle",                // Displays stars that flicker on and off
+    "mode": "Stars",                // Displays stars that flicker on and off
     "data": {
-        "colors" : [color]
         "speed": "##"               // The speed of the rainbow changing (TODO figure out what values work here)
-        "frequency": float between 0 and 1
     }
 }
 
