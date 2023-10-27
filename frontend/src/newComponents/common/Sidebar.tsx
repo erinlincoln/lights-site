@@ -10,7 +10,7 @@ export default function Sidebar({items}: {items: SidebarItem[]}) {
         <div className='d-flex flex-column justify-content-start align-items-start p-2 pt-4'>
             {
                 items.map((item) =>
-                    <div className='sidebar-item p-2 d-flex flex-row align-items-center' onClick={item.onClick}>
+                    <div className='sidebar-item p-2 d-flex flex-row align-items-center' onClick={item.onClick} key={item.label}>
                         <i className={`bi ${item.iconClass} me-3`}></i>
                         <span className='text-lowercase'>{item.label}</span>
                     </div>

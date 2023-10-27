@@ -13,7 +13,7 @@ export default function SelectionFooter() {
             <div className='dropdown-menu' aria-labelledby='dropdownMenuButton'>
                 {
                     ['bedroom', 'livingroom', 'hallway', 'office'].filter(r => r !== room).map(room =>
-                        <a className='dropdown-item' onClick={() => setRoom(room)}>{room === 'livingroom' ? 'living room' : room}</a>
+                        <a className='dropdown-item' onClick={() => setRoom(room)} key={room}>{room === 'livingroom' ? 'living room' : room}</a>
                     )
                 }
             </div>

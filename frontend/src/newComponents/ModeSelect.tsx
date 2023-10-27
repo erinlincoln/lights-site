@@ -55,7 +55,7 @@ export default function ModeSelect() {
                     <tbody className='table-group-divider'>
                         {
                             searchModes.map((mode) => {
-                                return <tr onClick={() => { setMode(mode); setStage(lightsSequence.COLORSELECT)}}>
+                                return <tr onClick={() => { setMode(mode); setStage(lightsSequence.COLORSELECT)}} key={mode.name}>
                                     <td className='fw-bold'>{mode.type}</td>
                                     <td className='fst-italic'>{mode.name}</td>
                                     <td>{mode.description}</td>
