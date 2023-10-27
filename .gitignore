@@ -2,3 +2,4 @@ backend/node_modules/
 frontend/node_modules/
 old-frontend/node_modules/
 *.pyc
+.DS_Store
