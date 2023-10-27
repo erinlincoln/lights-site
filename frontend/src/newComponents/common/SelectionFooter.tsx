@@ -6,8 +6,8 @@ export default function SelectionFooter() {
 
   return (
     <footer className='footer d-flex justify-content-center'>
-        <div className=' dropdown'>
-            <button className="btn btn-secondary btn-lg dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <div className='dropdown'>
+            <button className="btn btn-secondary btn-lg dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                 {room === 'livingroom' ? 'living room' : room}
             </button>
             <div className='dropdown-menu' aria-labelledby='dropdownMenuButton'>

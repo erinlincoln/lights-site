@@ -1,7 +1,7 @@
 import { ReqBody } from "../ts/request";
 
 async function sendLightsReq(req : ReqBody) {
-    await fetch('http://localhost:3001/lights/', {
+    await fetch('http://192.168.0.6:3001/lights/', {
         method: 'POST',
         mode: 'cors',
         headers: {

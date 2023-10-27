@@ -18,7 +18,14 @@ const bodyReducer = (state: ReqBody, action: BodyAction) : ReqBody => {
     case "setup":
       return { strips: [...state.strips, action.payload]};
     case "update":
-      return { strips: state.strips.map( (strip : ReqStrip) => strip.id === action.payload.id ? action.payload : strip )};
+      {
+        console.log(action.payload, state.strips.filter( (strip : ReqStrip) => strip.id === action.payload.id))
+        const newData = state.strips.map( (strip : ReqStrip) => strip.id === action.payload.id ? action.payload : strip )
+        if ( state.strips.filter( (strip : ReqStrip) => strip.id === action.payload.id).length === 0 ) state.strips.push(action.payload)
+        return { strips: newData }
+      }
+    case "reset":
+      return {strips: []}  
     default:
       return state;
   }

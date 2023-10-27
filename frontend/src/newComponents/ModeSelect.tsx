@@ -10,7 +10,7 @@ export default function ModeSelect() {
     const {setStage, setMode} = useSequenceContext();
     const [searchTerm, setSearch] = useState('');
     const [searchModes, setSearchModes] = useState<Mode[]>(modes);
-    const [searchType, setSearchType] = useState({solid: false, multicolor: false, gradient: false, off: false, runningmulticolor: false, twinkle: false, rainbow: false });
+    const [searchType, setSearchType] = useState({solid: false, multicolor: false, range: false, gradient: false, off: false, runningmulticolor: false, twinkle: false, rainbow: false });
 
     // filter modes on search term or type change
     useEffect(()=>{

@@ -15,7 +15,7 @@ enum StripId {
 const RoomStrips = {
     office: [StripId.O1, StripId.O2, StripId.O3],
     livingroom: [StripId.L1, StripId.L2, StripId.L3],
-    hallway: [StripId.H1, StripId.H2],
+    hallway: [StripId.H1],
     bedroom: [StripId.B1, StripId.B2]
 }
 

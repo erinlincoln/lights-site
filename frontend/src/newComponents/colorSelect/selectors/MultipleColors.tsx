@@ -21,7 +21,7 @@ export default function MultipleColors() {
                 (color, i) => 
                     <div className='accordion-item mult-container'>
                         <h1 className='accordion-header' id={`accordion-heading-${i}`}>
-                            <button className='btn btn-secondary accordion-button mult-btn' id={`dropdownMenuButton-${i}`} type="button" data-bs-toggle="collapse" data-bs-target={`#accordion-collapse-${i}`} aria-expanded="true" aria-controls="panelsStayOpen-collapseOne" style={{ background: color }}>Color {i + 1}</button>
+                            <button className='btn btn-secondary accordion-button mult-btn' id={`dropdownMenuButton-${i}`} type="button" data-bs-toggle="collapse" data-bs-target={`#accordion-collapse-${i}`} aria-expanded="true" aria-controls="panelsStayOpen-collapseOne" style={{ background: color ? color : '#000000' }}>Color {i + 1}</button>
                         </h1>
                         
                         <div id={`accordion-collapse-${i}`} className='accordion-collapse collapse mult-dropdown-menu' aria-labelledby={`accordion-heading-${i}`}>

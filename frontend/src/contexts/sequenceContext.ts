@@ -18,7 +18,7 @@ export const MySequenceContext = createContext<SequenceContext>({
     setStage: () => {},
     room: 'livingroom',
     setRoom: () => {},
-    mode: {type: '', name: ModeType.SOLID, description: ''},
+    mode: {type: '', name: ModeType.SOLID, mode: ModeType.SOLID, description: ''},
     setMode: () => {},
     body: {},
     setBody: () => {}});

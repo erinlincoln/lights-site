@@ -16,9 +16,11 @@ export default function ColorSlider() {
   const [pureColor, setPureColor] = useState(colors[0])
   const [currColors, setCurrColors] = useState(colors);
   const [dim, setDim] = useState(0);
-  const rainbow = new Rainbow();
-  rainbow.setNumberRange(0,100);
-  rainbow.setSpectrum( ...colors );
+  
+  const rainbowInit = new Rainbow();
+  rainbowInit.setNumberRange(0,100);
+  rainbowInit.setSpectrum( ...colors );
+  const [rainbow, setRainbow] = useState(rainbowInit)
 
   useEffect(() => {
     setBody({'colors': [color]});
@@ -28,7 +30,9 @@ export default function ColorSlider() {
     //update gradient
     const newColors = colors.map((c : any) => tinycolor(c).darken(dim).toString());
     setCurrColors(newColors);
-    rainbow.setSpectrum( ...newColors );
+    const newRainbow = new Rainbow()
+    newRainbow.setSpectrum( ...newColors );
+    setRainbow(newRainbow)
 
     // update dimness
     setColor(tinycolor(pureColor).darken(dim).toString());

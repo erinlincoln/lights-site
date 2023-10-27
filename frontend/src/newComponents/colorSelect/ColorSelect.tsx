@@ -8,6 +8,7 @@ import MultipleColors from './selectors/MultipleColors';
 import ColorSlider from './selectors/GradientSelector';
 import { useLightsContext } from '../../contexts/lightsContext';
 import { RoomStrips, StripId } from '../../ts/request.d';
+import { ModeType } from "../../ts/modes.d";
 
 export default function ColorSelect() {
   const {mode, setStage, body, room} = useSequenceContext();
@@ -15,14 +16,14 @@ export default function ColorSelect() {
   const [autoUpdate, setAutoUpdate] = useState(true);
 
   useEffect( () => {
-    RoomStrips[room].forEach( (id : StripId) => updateBody({type: 'update', payload: {id, mode: { name: mode.name, data: body}}}))
+    RoomStrips[room].forEach( (id : StripId) => updateBody({type: 'update', payload: {id, mode: { name: mode.mode, data: body}}}))
   }, [body])
 
   return (
     <div className='body-component'>
       <div id='color-select'>
         <div id='color-header' className='d-flex justify-content-between m-1 mb-4'>
-          <h1 className='header-txt' onClick={() => setStage(lightsSequence.MODESELECT)}>{mode.name}</h1>
+          <h1 className='header-txt' onClick={() => setStage(lightsSequence.MODESELECT)}>{mode.type}</h1>
           
           <div className='dropdown'>
             <i className="header-txt bi bi-three-dots" id='dropdownMenuButton' data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false"></i>
@@ -42,7 +43,7 @@ export default function ColorSelect() {
           mode.name === 'multicolor' && <MultipleColors />
         }
         {
-          mode.name === 'gradient' && <ColorSlider />
+          mode.name === ModeType.RANGE && <ColorSlider />
         }
         {
           !autoUpdate &&

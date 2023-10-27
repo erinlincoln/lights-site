@@ -53,10 +53,12 @@ export default function Apt(props:
     const laptopHandleMouseLeave = () => setLaptopHover(false);
 
     const handleClick = (room: 'office' | 'livingroom' | 'hallway' | 'bedroom' ) => {
+        console.log(room)
         setRoom(room); 
         setStage(lightsSequence.MODESELECT);
 
         // setup strips for that room
+        updateBody({type: 'reset'})
         RoomStrips[room].forEach( strip =>  updateBody({ type: 'setup', payload: { id: strip, mode: {} } }));
     }
 

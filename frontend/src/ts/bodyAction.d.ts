@@ -2,7 +2,8 @@ import { StripId } from "./request";
 
 enum BodyActionKind {
     SETUP = 'setup',
-    UPDATE = 'update'
+    UPDATE = 'update',
+    RESET = 'reset'
   }
 
 interface BodyAction {
