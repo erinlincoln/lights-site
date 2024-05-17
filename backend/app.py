@@ -1,69 +1,86 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, jsonify
 from flask_cors import CORS
 from setup import strips
 import threading
 import time
 from mode_data import create_mode_message, create_ota_message
+from database import init_db, EventHistory, Devices
 from test_timing import TimingTester
 
-app = Flask(__name__)
-CORS(app)
-
 queue = []
-updateInProgress = False
-DELAY = 0.02 # delay between sending data
-
 # Global semaphore used to control access to the mode queue
 queue_sem = threading.Semaphore(1)
 
 # Global timers
 tt_setLights = TimingTester("SetLights()")
 
-@app.route('/lights/', methods=['GET', 'POST'])
-def setLights():
-    global queue, queue_sem
+def create_app():
+    
+    app = Flask(__name__)
+    CORS(app)
 
-    tt_setLights.start()
+    init_db(app)
 
-    queue_sem.acquire()
-    # BEGIN CRITICAL SECTION
+    @app.route('/lights/', methods=['GET', 'POST'])
+    def setLights():
+        global queue, queue_sem
 
-    # get data and get room object based on room name
-    data = request.json
+        tt_setLights.start()
 
-    # if queue is over 10 entries, take out odd numbered entries
-    if len(queue) > 10:
-        for i in range(4):
-            queue.pop( i * 2 + 1 )
+        queue_sem.acquire()
+        # BEGIN CRITICAL SECTION
 
-    # add data straight to the queue
-    queue.append( data )
+        # get data and get room object based on room name
+        data = request.json
 
-    # END CRITICAL SECTION
-    queue_sem.release()
+        # if queue is over 10 entries, take out odd numbered entries
+        if len(queue) > 10:
+            for i in range(4):
+                queue.pop( i * 2 + 1 )
 
-    tt_setLights.stop()
-    tt_setLights.print()
+        # add data straight to the queue
+        queue.append( data )
 
-    return 'added to queue'
+        # END CRITICAL SECTION
+        queue_sem.release()
+
+        tt_setLights.stop()
+        tt_setLights.print()
+
+        return 'added to queue'
+
+    @app.route('/eventhistory/', methods=['GET'])
+    def getEventHistory():
+        # TODO support filtering history by dates
+        events = EventHistory.get_events_by_time()
+        return jsonify([event.to_dict() for event in events])
+
+    @app.route('/devices/', methods=['GET'])
+    def getDevices():
+        devices = Devices.get_devices()
+        return jsonify([device.to_dict() for device in devices])
+
+    @app.route('/devices/', methods=['POST'])
+    def addDevice():
+        data = request.json
+        if 'device' not in data:
+            return "devices endpoint requires devices entry", 404
+        if 'ip' not in data['device'] or 'id' not in data['device']:
+            return "device entry requires ip and id", 404
+        device = Devices.add_device(data['device']['id'], data['device']['ip'])
+        return jsonify(device.to_dict())
+    
+    @app.route('/eventhistoryclear/', methods=['POST'])
+    def clearEventHistory():
+        return str(EventHistory.clear())
 
 
-@app.errorhandler(Exception)
-def handle_exception(e):
-    print(e)
-    return str(e)
-
-# def getMode( type):
-#     modes_dict = {
-#         'single-color': modes.LEDMode_Solid,
-#         'multi-color': modes.LEDMode_Alternating
-#     }
-
-#     return modes_dict[ type ]
-
-# schedule data to be added to queue later
-def scheduleData(data):
-    d = 1
+    @app.errorhandler(Exception)
+    def handle_exception(e):
+        print(e)
+        return str(e)
+    
+    return app
 
 
 # TODO Change json handling to queue strip requests individually
@@ -74,103 +91,95 @@ def sendData():
     tt_sendData = TimingTester("SendData()")
     tt_queueSem = TimingTester("Queue Sem.")
 
-    # Infinite loop over queue
-    while True:
+    app = create_app()
 
-        tt_sendData.start()
-        tt_queueSem.start()
+    with app.app_context():
 
-        # Always send timestamp on startup
-        last_time_sent = time.time() - 500
+        # Infinite loop over queue
+        while True:
 
-        # Pull in new modes from queue
-        if queue_sem.acquire(timeout=0.01):
-            # BEGIN CRITICAL SECTION
+            tt_sendData.start()
+            tt_queueSem.start()
 
-            # if there is data in the queue
-            if len(queue) > 0:
-                data = queue[0]
+            # Always send timestamp on startup
+            last_time_sent = time.time() - 500
 
-                # if data is scheduled
-                # TODO this
-                #if 'scheduled' in data:
-                #    scheduleData(data)
-                
-                # var to keep track of whether current data can be deleted from queue
-                canDelete = True
+            # Pull in new modes from queue
+            if queue_sem.acquire(timeout=0.01):
+                # BEGIN CRITICAL SECTION
 
-                # Create a system message if necessary
-                if "system" in data:
-                    if "ota" in data["system"] and data["system"]["ota"] in strips.keys():
-                        message = create_ota_message()
-                        strip = strips[data["system"]["ota"]]
-                        print("Sending OTA task to " + data["system"]["ota"])
-                        strip.setData(message)
-                        canDelete = canDelete and strip.send()
+                # if there is data in the queue
+                if len(queue) > 0:
+                    data = queue[0]
+                    
+                    # var to keep track of whether current data can be deleted from queue
+                    canDelete = True
 
-                # Update all strips in data
-                if "strips" in data:
-                    for strip_json in data["strips"]:
-                        # error checking
-                        if "id" not in strip_json:
-                            print("Invalid JSON received: No strip ID. Skipping strip.")
-                            continue
-                        if "mode" not in strip_json:
-                            print("Invalid JSON received: No mode. Skipping strip.")
-                            continue
-                        if strip_json["id"] not in strips:
-                            print("Invalid strip ID. Skipping strip.")
-                            continue
-                        if "name" not in strip_json["mode"]:
-                            print("Invalid JSON received: No name in mode. Skipping strip.")
-                            continue
-                        if "data" not in strip_json["mode"]:
-                            print("Invalid JSON received: No data in mode. Skipping strip.")
-                            continue
+                    # Create a system message if necessary
+                    if "system" in data:
+                        if "ota" in data["system"] and data["system"]["ota"] in strips.keys():
+                            message = create_ota_message()
+                            strip = strips[data["system"]["ota"]]
+                            print("Sending OTA task to " + data["system"]["ota"])
+                            strip.setData(message)
+                            canDelete = canDelete and strip.send()
 
-                        # parse strip
-                        strip = strips[strip_json["id"]]
-                        message = create_mode_message(strip.index, strip_json["mode"])
+                    # Update all strips in data
+                    if "strips" in data:
+                        for strip_json in data["strips"]:
+                            # error checking
+                            if "id" not in strip_json:
+                                print("Invalid JSON received: No strip ID. Skipping strip.")
+                                continue
+                            if "mode" not in strip_json:
+                                print("Invalid JSON received: No mode. Skipping strip.")
+                                continue
+                            if strip_json["id"] not in strips:
+                                print("Invalid strip ID. Skipping strip.")
+                                continue
+                            if "name" not in strip_json["mode"]:
+                                print("Invalid JSON received: No name in mode. Skipping strip.")
+                                continue
+                            if "data" not in strip_json["mode"]:
+                                print("Invalid JSON received: No data in mode. Skipping strip.")
+                                continue
 
-                        if message is None:
-                            print("Failed to parse mode JSON. Skipping strip.")
-                            continue
+                            # parse strip
+                            strip = strips[strip_json["id"]]
+                            message = create_mode_message(strip.index, strip_json["mode"])
 
-                        # Finally change the mode of the strip
-                        print("Changing mode of ", strip_json["id"])
-                        strip.setData(message)
-                        canDelete = canDelete and strip.send()
+                            if message is None:
+                                print("Failed to parse mode JSON. Skipping strip.")
+                                continue
 
-                # if still can delete, pop data from queue
-                if canDelete:
-                    queue.pop(0)
+                            # Finally change the mode of the strip
+                            print("Changing mode of ", strip_json["id"])
+                            strip.setData(message)
+                            canDelete = canDelete and strip.send()
 
-            # END CRITICAL SECTION
-            queue_sem.release()
+                    # if still can delete, pop data from queue
+                    if canDelete:
+                        queue.pop(0)
 
-        else:
-            # Failed to grab semaphore, print debug line
-            print("Failed to grab semaphore: data thread")
+                # END CRITICAL SECTION
+                queue_sem.release()
 
-        tt_queueSem.stop()
-        tt_queueSem.print()
+            else:
+                # Failed to grab semaphore, print debug line
+                print("Failed to grab semaphore: data thread")
 
-        # Wait until next loop
-        time.sleep(DELAY)
+            tt_queueSem.stop()
+            tt_queueSem.print()
 
-        tt_sendData.stop()
-        tt_sendData.print()
+            # Wait until next loop
+            time.sleep(0.02)
 
+            tt_sendData.stop()
+            tt_sendData.print()
 
-
-
-
-def run_backend():
-    app.run(host='0.0.0.0', port=3001)
 
 if __name__ == '__main__':
-    t_bend = threading.Thread(target = run_backend)
+    app = create_app()
     t_data = threading.Thread(target = sendData)
-    
-    t_bend.start()
     t_data.start()
+    app.run(host='0.0.0.0', port=3001)

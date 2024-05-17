@@ -1,6 +1,7 @@
 import socket
 from mode_data import create_mode_message
 from threading import Semaphore
+from database import EventHistory, Devices
 from test_timing import TimingTester
 from constants import *
 import time
@@ -37,12 +38,16 @@ class Strip:
         print('TX:', self.data)
         print(self.host)
 
+        device = Devices.get_device_by_ip(self.host)
+
         #if self.host not in sockets.keys():
         #    sockets[self.host] = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         #    sockets[self.host].connect(( self.host, PORT ))
         #self.socket = sockets[self.host]
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.socket.connect(( self.host, PORT ))
+
+        EventHistory.log_outbound_event(self.host, self.data.hex())
 
         try:
             #print('trying to send')
@@ -72,8 +77,11 @@ class Strip:
             print("  Response length: " + str(res_length))
             res_error = struct.unpack('>B', res_header[7:8])[0]
             print("  Response error: " + str(res_error))
+            res_body = ""
             if res_length > 8:
                 res_body = str(self.socket.recv(res_length - 8))
+            
+            EventHistory.log_inbound_event(self.host, res_header.hex() + res_body)
 
             self.socket.close()
 

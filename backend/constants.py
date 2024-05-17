@@ -20,7 +20,7 @@ TASK_MODE_RAINBOW               = 0x16
 MAX_MESSAGE_LENGTH = 7 + 303
 
 # ip addresses
-IP_OFFICE =     '192.168.0.19' # V
+IP_OFFICE =     '192.168.0.26' # V
 IP_HALLWAY =    '192.168.0.19' # IV
 IP_LIVINGROOM = '192.168.0.20' # III
 IP_BEDROOM =    '192.168.0.23' # II
