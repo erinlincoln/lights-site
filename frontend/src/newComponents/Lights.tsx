@@ -8,6 +8,7 @@ import { MySequenceContext, SequenceContext } from '../contexts/sequenceContext'
 import ModeSelect from './ModeSelect';
 import { ModeType } from '../ts/modes.d';
 import ColorSelect from './colorSelect/ColorSelect';
+import EventHistory from './EventHistory';
 
 export default function Lights() {
   const [stage, setStage] = useState(lightsSequence.DASHBOARD);
@@ -20,7 +21,10 @@ export default function Lights() {
     <MySequenceContext.Provider value={value}>
       <Header />
       <div className='lights-wrapper'>
-        <Sidebar items={[{ label: 'lights', iconClass: 'bi-lightbulb', onClick: () => setStage(lightsSequence.DASHBOARD) }]}/>
+        <Sidebar items={[
+          { label: 'lights', iconClass: 'bi-lightbulb', onClick: () => setStage(lightsSequence.DASHBOARD) },
+          { label: 'events', iconClass: 'bi-book', onClick: () => setStage(lightsSequence.EVENTHISTORY) }
+        ]}/>
         {
           stage === lightsSequence.DASHBOARD && <Dashboard />
         }
@@ -29,6 +33,9 @@ export default function Lights() {
         }
         {
           stage === lightsSequence.COLORSELECT && <ColorSelect />
+        }
+        {
+          stage === lightsSequence.EVENTHISTORY && <EventHistory />
         }
       </div>
       

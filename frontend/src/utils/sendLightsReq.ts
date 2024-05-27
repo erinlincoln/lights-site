@@ -1,7 +1,8 @@
 import { ReqBody } from "../ts/request";
+import { BE_URL } from "./lightsConstants";
 
 async function sendLightsReq(req : ReqBody) {
-    await fetch('http://localhost:3001/lights/', {
+    await fetch(BE_URL + '/lights/', {
         method: 'POST',
         mode: 'cors',
         headers: {
